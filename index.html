@@ -103,7 +103,7 @@
             );
         }
 
-        function MainHeader({ user, onLogout }) {
+        function MainHeader({ user, onLogout, searchTerm, onSearchChange }) {
             return (
                 <header className="main-header">
                     <div className="header-left">
@@ -114,7 +114,13 @@
                     <div className="header-center">
                         <div className="search-wrapper">
                             <span className="search-icon">🔍</span>
-                            <input type="text" placeholder="Search tasks, teammates..." className="header-search" />
+                            <input
+                                type="text"
+                                placeholder="Search tasks, teammates..."
+                                className="header-search"
+                                value={searchTerm}
+                                onChange={(e) => onSearchChange(e.target.value)}
+                            />
                         </div>
                     </div>
 
@@ -212,6 +218,7 @@
         }
 
         function Dashboard({ user, onLogout }) {
+            const [searchTerm, setSearchTerm] = useState('');
             const [tasks, setTasks] = useState(() => {
                 try {
                     const savedTasks = localStorage.getItem('tm_tasks');
@@ -266,7 +273,12 @@
                 }
             };
 
-            const filteredTasks = tasks.filter(task => task.role === 'All' || task.role === user);
+            const filteredTasks = tasks.filter(task => {
+                const matchesRole = task.role === 'All' || task.role === user;
+                const matchesSearch = task.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    task.desc.toLowerCase().includes(searchTerm.toLowerCase());
+                return matchesRole && matchesSearch;
+            });
 
             const renderColumn = (status, title) => {
                 const columnTasks = filteredTasks.filter(t => t.status === status);
@@ -276,14 +288,23 @@
                             <h2>{title}</h2>
                             <span className="task-count">{columnTasks.length}</span>
                         </div>
-                        {columnTasks.map(task => (
-                            <TaskCard
-                                key={task.id}
-                                task={task}
-                                onToggleComplete={handleToggleComplete}
-                                onDelete={handleDeleteTask}
-                            />
-                        ))}
+                        <div className="column-body">
+                            {columnTasks.length > 0 ? (
+                                columnTasks.map(task => (
+                                    <TaskCard
+                                        key={task.id}
+                                        task={task}
+                                        onToggleComplete={handleToggleComplete}
+                                        onDelete={handleDeleteTask}
+                                    />
+                                ))
+                            ) : (
+                                <div className="empty-state">
+                                    <span className="empty-icon">📂</span>
+                                    <p>No tasks found</p>
+                                </div>
+                            )}
+                        </div>
                     </div>
                 );
             };
@@ -292,7 +313,12 @@
                 <div className="app-layout">
                     <Sidebar onLogout={onLogout} onReset={handleResetTasks} />
                     <main className="main-content">
-                        <MainHeader user={user} onLogout={onLogout} />
+                        <MainHeader
+                            user={user}
+                            onLogout={onLogout}
+                            searchTerm={searchTerm}
+                            onSearchChange={setSearchTerm}
+                        />
                         <TaskForm onAddTask={handleAddTask} userRole={user} />
                         <div className="task-sections">
                             {renderColumn('todo', 'To Do')}

@@ -149,6 +149,52 @@ body {
     border: 1px solid var(--glass-border);
 }
 
+/* Scrollbar Styles */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.column-body {
+    max-height: calc(100vh - 350px);
+    overflow-y: auto;
+    padding-right: 0.5rem;
+    margin-right: -0.5rem;
+}
+
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 1rem;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px dashed var(--glass-border);
+    border-radius: 1.5rem;
+    color: var(--text-secondary);
+    text-align: center;
+    opacity: 0.6;
+}
+
+.empty-icon {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    display: block;
+}
+
 .task-card {
     background: var(--glass-bg);
     backdrop-filter: blur(15px);
@@ -162,6 +208,11 @@ body {
     animation: taskEntry 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) backwards;
     display: flex;
     flex-direction: column;
+    transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.task-card:active {
+    transform: scale(0.98);
 }
 
 @keyframes taskEntry {
@@ -753,11 +804,14 @@ body {
 @media (max-width: 992px) {
     .task-sections {
         grid-template-columns: 1fr;
-        gap: 2rem;
     }
 
-    .task-column {
-        min-width: 0;
+    .header-center {
+        display: none;
+    }
+
+    .main-header {
+        padding: 1rem;
     }
 }
 
