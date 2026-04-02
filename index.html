@@ -115,21 +115,34 @@
                 setTasks(tasks.filter(task => task.id !== id));
             };
 
+            const handleToggleComplete = (id) => {
+                setTasks(tasks.map(task =>
+                    task.id === id
+                        ? { ...task, status: task.status === 'done' ? 'todo' : 'done' }
+                        : task
+                ));
+            };
+
             const filteredTasks = tasks.filter(task => task.role === 'All' || task.role === user);
 
             const renderColumn = (status, title) => (
                 <div className="task-column">
                     <h2>{title}</h2>
                     {filteredTasks.filter(t => t.status === status).map(task => (
-                        <div key={task.id} className="task-card">
-                            <button className="delete-task-btn" onClick={() => handleDeleteTask(task.id)} title="Delete Task">×</button>
+                        <div key={task.id} className={`task-card ${task.status === 'done' ? 'completed' : ''}`}>
+                            <div className="task-actions">
+                                <button className="action-btn complete-btn" onClick={() => handleToggleComplete(task.id)} title="Toggle Complete">
+                                    {task.status === 'done' ? '↩️' : '✔'}
+                                </button>
+                                <button className="action-btn delete-btn" onClick={() => handleDeleteTask(task.id)} title="Delete Task">×</button>
+                            </div>
                             <div className={`task-status status-${task.status}`}></div>
                             <div className="role-tag">
                                 <span className="icon">👤</span> {task.role === 'All' ? 'Everyone' : task.role}
                             </div>
                             <h3>{task.title}</h3>
                             <p>{task.desc}</p>
-                            <span className="due-date">{task.due}</span>
+                            <span className="due-date">{task.due === 'New' && task.status === 'done' ? 'Completed' : task.due}</span>
                         </div>
                     ))}
                 </div>
