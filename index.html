@@ -124,7 +124,9 @@
                         <div key={task.id} className="task-card">
                             <button className="delete-task-btn" onClick={() => handleDeleteTask(task.id)} title="Delete Task">×</button>
                             <div className={`task-status status-${task.status}`}></div>
-                            {task.role !== 'All' && <div className="role-tag">{task.role}</div>}
+                            <div className="role-tag">
+                                <span className="icon">👤</span> {task.role === 'All' ? 'Everyone' : task.role}
+                            </div>
                             <h3>{task.title}</h3>
                             <p>{task.desc}</p>
                             <span className="due-date">{task.due}</span>
