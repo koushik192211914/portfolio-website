@@ -22,7 +22,7 @@
     <div id="root"></div>
 
     <script type="text/babel">
-        const { useState } = React;
+        const { useState, useEffect } = React;
 
         function Login({ onLogin }) {
             return (
@@ -131,6 +131,13 @@
                 ));
             };
 
+            const handleResetTasks = () => {
+                if (confirm('Are you sure you want to reset all tasks? This will clear your saved data.')) {
+                    localStorage.removeItem('tm_tasks');
+                    window.location.reload();
+                }
+            };
+
             const filteredTasks = tasks.filter(task => task.role === 'All' || task.role === user);
 
             const renderColumn = (status, title) => (
@@ -168,6 +175,7 @@
                             <a href="#" className="nav-item"><span className="icon">⚙️</span> Settings</a>
                         </nav>
                         <div className="sidebar-footer">
+                            <button onClick={handleResetTasks} className="reset-btn">Reset Dashboard</button>
                             <button onClick={onLogout} className="logout-btn-large">Logout</button>
                         </div>
                     </aside>
