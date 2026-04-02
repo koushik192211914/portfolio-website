@@ -47,6 +47,33 @@
         }
 
         function Dashboard({ user, onLogout }) {
+            const allTasks = [
+                { id: 1, title: 'System Maintenance', desc: 'Server health check and updates.', status: 'todo', role: 'Admin', due: 'Apr 10' },
+                { id: 2, title: 'Project Research', desc: 'Analyze competitor task management tools.', status: 'todo', role: 'All', due: 'Apr 5' },
+                { id: 3, title: 'UI Design', desc: 'Drafting the glassmorphism layout.', status: 'progress', role: 'All', due: 'Apr 3' },
+                { id: 4, title: 'Security Audit', desc: 'Review user access logs and permissions.', status: 'progress', role: 'Admin', due: 'Apr 6' },
+                { id: 5, title: 'Requirement Gathering', desc: 'Finalized the core feature list.', status: 'done', role: 'All', due: 'Completed' },
+                { id: 6, title: 'API Integration', desc: 'Connect the frontend with the mock API.', status: 'todo', role: 'User1', due: 'Apr 8' },
+                { id: 7, title: 'Database Cleanup', desc: 'Remove redundant records from dev db.', status: 'progress', role: 'User2', due: 'Apr 7' }
+            ];
+
+            const filteredTasks = allTasks.filter(task => task.role === 'All' || task.role === user);
+
+            const renderColumn = (status, title) => (
+                <div className="task-column">
+                    <h2>{title}</h2>
+                    {filteredTasks.filter(t => t.status === status).map(task => (
+                        <div key={task.id} className="task-card">
+                            <div className={`task-status status-${task.status}`}></div>
+                            {task.role !== 'All' && <div className="role-tag">{task.role}</div>}
+                            <h3>{task.title}</h3>
+                            <p>{task.desc}</p>
+                            <span className="due-date">{task.due}</span>
+                        </div>
+                    ))}
+                </div>
+            );
+
             return (
                 <main className="app-container">
                     <header className="app-header">
@@ -55,39 +82,13 @@
                             <button onClick={onLogout} className="logout-btn">Logout</button>
                         </div>
                         <h1>Task Manager Dashboard</h1>
-                        <p>Stay organized, stay productive.</p>
+                        <p>{user === 'Admin' ? 'Administrator Control Panel' : 'Collaborative Workspace'}</p>
                     </header>
 
                     <section className="task-sections">
-                        <div className="task-column">
-                            <h2>To Do</h2>
-                            <div className="task-card">
-                                <div className="task-status status-todo"></div>
-                                <h3>Project Research</h3>
-                                <p>Analyze competitor task management tools.</p>
-                                <span className="due-date">Due: Apr 5</span>
-                            </div>
-                        </div>
-
-                        <div className="task-column">
-                            <h2>In Progress</h2>
-                            <div className="task-card">
-                                <div className="task-status status-progress"></div>
-                                <h3>UI Design</h3>
-                                <p>Drafting the glassmorphism layout for the dashboard.</p>
-                                <span className="due-date">Due: Apr 3</span>
-                            </div>
-                        </div>
-
-                        <div className="task-column">
-                            <h2>Completed</h2>
-                            <div className="task-card">
-                                <div className="task-status status-done"></div>
-                                <h3>Requirement Gathering</h3>
-                                <p>Finalized the core feature list for V1.</p>
-                                <span className="due-date">Completed</span>
-                            </div>
-                        </div>
+                        {renderColumn('todo', 'To Do')}
+                        {renderColumn('progress', 'In Progress')}
+                        {renderColumn('done', 'Completed')}
                     </section>
                 </main>
             );
