@@ -46,6 +46,79 @@
             );
         }
 
+        const INITIAL_TASKS = [
+            { id: 1, title: 'System Maintenance', desc: 'Server health check and updates.', status: 'todo', role: 'Admin', due: 'Apr 10' },
+            { id: 2, title: 'Project Research', desc: 'Analyze competitor task management tools.', status: 'todo', role: 'All', due: 'Apr 5' },
+            { id: 3, title: 'UI Design', desc: 'Drafting the glassmorphism layout.', status: 'progress', role: 'All', due: 'Apr 3' },
+            { id: 4, title: 'Security Audit', desc: 'Review user access logs and permissions.', status: 'progress', role: 'Admin', due: 'Apr 6' },
+            { id: 5, title: 'Requirement Gathering', desc: 'Finalized the core feature list.', status: 'done', role: 'All', due: 'Completed' },
+            { id: 6, title: 'API Integration', desc: 'Connect the frontend with the mock API.', status: 'todo', role: 'User1', due: 'Apr 8' },
+            { id: 7, title: 'Database Cleanup', desc: 'Remove redundant records from dev db.', status: 'progress', role: 'User2', due: 'Apr 7' }
+        ];
+
+        function Sidebar({ onLogout, onReset }) {
+            return (
+                <aside className="sidebar">
+                    <div className="sidebar-logo">TaskMaster</div>
+                    <nav className="sidebar-nav">
+                        <a href="#" className="nav-item active"><span className="icon">📋</span> Tasks</a>
+                        <a href="#" className="nav-item"><span className="icon">📅</span> Calendar</a>
+                        <a href="#" className="nav-item"><span className="icon">📊</span> Analytics</a>
+                        <a href="#" className="nav-item"><span className="icon">⚙️</span> Settings</a>
+                    </nav>
+                    <div className="sidebar-footer">
+                        <button onClick={onReset} className="reset-btn">Reset Dashboard</button>
+                        <button onClick={onLogout} className="logout-btn-large">Logout</button>
+                    </div>
+                </aside>
+            );
+        }
+
+        function MainHeader({ user }) {
+            return (
+                <header className="main-header">
+                    <div className="header-left">
+                        <h1>Productivity Dashboard</h1>
+                        <p className="welcome-text">Overview of your current projects and collaborators</p>
+                    </div>
+                    <div className="header-right">
+                        <div className="profile-info">
+                            <div className="avatar">
+                                <span className={user === 'Admin' ? 'icon admin' : 'icon'}>
+                                    {user === 'Admin' ? '🛡️' : '👤'}
+                                </span>
+                            </div>
+                            <div className="user-details">
+                                <span className="user-name">{user} Profile</span>
+                                <span className="user-status">Online</span>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+            );
+        }
+
+        function TaskCard({ task, onToggleComplete, onDelete }) {
+            return (
+                <div key={task.id} className={`task-card ${task.status === 'done' ? 'completed' : ''}`}>
+                    <div className="task-actions">
+                        <button className="action-btn complete-btn" onClick={() => onToggleComplete(task.id)} title="Toggle Complete">
+                            {task.status === 'done' ? '↩️' : '✔'}
+                        </button>
+                        <button className="action-btn delete-btn" onClick={() => onDelete(task.id)} title="Delete Task">×</button>
+                    </div>
+                    <div className={`task-status status-${task.status}`}></div>
+                    <div className="role-tag">
+                        <span className="icon">👤</span> {task.role === 'All' ? 'Everyone' : task.role}
+                    </div>
+                    {task.status === 'done' && <div className="completed-badge">✓ Completed</div>}
+                    <h3>{task.title}</h3>
+                    <p>{task.desc}</p>
+                    <span className="due-date">{task.due === 'New' && task.status === 'done' ? 'Completed' : task.due}</span>
+                </div>
+            );
+        }
+
         function TaskForm({ onAddTask, userRole }) {
             const [title, setTitle] = useState('');
             const [assignedRole, setAssignedRole] = useState(userRole === 'Admin' ? 'All' : userRole);
@@ -75,14 +148,13 @@
                                 onChange={(e) => setAssignedRole(e.target.value)}
                                 className="role-select"
                             >
-                                <option value="All">Assign to All</option>
-                                <option value="Admin">Admin Only</option>
-                                <option value="User1">User 1</option>
-                                <option value="User2">User 2</option>
+                                <option value="All">Assign to Everyone</option>
+                                <option value="User1">Assign to User1</option>
+                                <option value="User2">Assign to User2</option>
                             </select>
                         )}
                         <button type="submit" className="add-task-btn">
-                            <span className="icon">＋</span> Add Task
+                            <span className="icon">+</span> Add Task
                         </button>
                     </form>
                 </div>
@@ -93,15 +165,7 @@
             const [tasks, setTasks] = useState(() => {
                 const savedTasks = localStorage.getItem('tm_tasks');
                 if (savedTasks) return JSON.parse(savedTasks);
-                return [
-                    { id: 1, title: 'System Maintenance', desc: 'Server health check and updates.', status: 'todo', role: 'Admin', due: 'Apr 10' },
-                    { id: 2, title: 'Project Research', desc: 'Analyze competitor task management tools.', status: 'todo', role: 'All', due: 'Apr 5' },
-                    { id: 3, title: 'UI Design', desc: 'Drafting the glassmorphism layout.', status: 'progress', role: 'All', due: 'Apr 3' },
-                    { id: 4, title: 'Security Audit', desc: 'Review user access logs and permissions.', status: 'progress', role: 'Admin', due: 'Apr 6' },
-                    { id: 5, title: 'Requirement Gathering', desc: 'Finalized the core feature list.', status: 'done', role: 'All', due: 'Completed' },
-                    { id: 6, title: 'API Integration', desc: 'Connect the frontend with the mock API.', status: 'todo', role: 'User1', due: 'Apr 8' },
-                    { id: 7, title: 'Database Cleanup', desc: 'Remove redundant records from dev db.', status: 'progress', role: 'User2', due: 'Apr 7' }
-                ];
+                return INITIAL_TASKS;
             });
 
             useEffect(() => {
@@ -145,82 +209,48 @@
                 <div className="task-column">
                     <h2>{title}</h2>
                     {filteredTasks.filter(t => t.status === status).map(task => (
-                        <div key={task.id} className={`task-card ${task.status === 'done' ? 'completed' : ''}`}>
-                            <div className="task-actions">
-                                <button className="action-btn complete-btn" onClick={() => handleToggleComplete(task.id)} title="Toggle Complete">
-                                    {task.status === 'done' ? '↩️' : '✔'}
-                                </button>
-                                <button className="action-btn delete-btn" onClick={() => handleDeleteTask(task.id)} title="Delete Task">×</button>
-                            </div>
-                            <div className={`task-status status-${task.status}`}></div>
-                            <div className="role-tag">
-                                <span className="icon">👤</span> {task.role === 'All' ? 'Everyone' : task.role}
-                            </div>
-                            {task.status === 'done' && <div className="completed-badge">✓ Completed</div>}
-                            <h3>{task.title}</h3>
-                            <p>{task.desc}</p>
-                            <span className="due-date">{task.due === 'New' && task.status === 'done' ? 'Completed' : task.due}</span>
-                        </div>
+                        <TaskCard
+                            key={task.id}
+                            task={task}
+                            onToggleComplete={handleToggleComplete}
+                            onDelete={handleDeleteTask}
+                        />
                     ))}
                 </div>
             );
 
             return (
                 <div className="app-layout">
-                    <aside className="sidebar">
-                        <div className="sidebar-logo">TaskMaster</div>
-                        <nav className="sidebar-nav">
-                            <a href="#" className="nav-item active"><span className="icon">📋</span> Tasks</a>
-                            <a href="#" className="nav-item"><span className="icon">📅</span> Calendar</a>
-                            <a href="#" className="nav-item"><span className="icon">📊</span> Analytics</a>
-                            <a href="#" className="nav-item"><span className="icon">⚙️</span> Settings</a>
-                        </nav>
-                        <div className="sidebar-footer">
-                            <button onClick={handleResetTasks} className="reset-btn">Reset Dashboard</button>
-                            <button onClick={onLogout} className="logout-btn-large">Logout</button>
-                        </div>
-                    </aside>
-
+                    <Sidebar onLogout={onLogout} onReset={handleResetTasks} />
                     <main className="main-content">
-                        <header className="main-header">
-                            <div className="header-left">
-                                <h1>Dashboard</h1>
-                                <p>{user === 'Admin' ? 'Administrator Control Panel' : 'Collaborative Workspace'}</p>
-                            </div>
-                            <div className="header-right">
-                                <div className="notification-bell">🔔</div>
-                                <div className="user-profile">
-                                    <span className="user-name">{user}</span>
-                                    <div className="user-avatar">{user[0]}</div>
-                                </div>
-                            </div>
-                        </header>
-
+                        <MainHeader user={user} />
                         <TaskForm onAddTask={handleAddTask} userRole={user} />
-
-                        <section className="task-sections">
+                        <div className="task-sections">
                             {renderColumn('todo', 'To Do')}
                             {renderColumn('progress', 'In Progress')}
                             {renderColumn('done', 'Completed')}
-                        </section>
+                        </div>
                     </main>
                 </div>
             );
         }
 
         function App() {
-            const [user, setUser] = useState(null);
+            const [user, setUser] = useState(() => localStorage.getItem('tm_user'));
 
-            const handleLogin = (role) => setUser(role);
-            const handleLogout = () => setUser(null);
+            const handleLogin = (role) => {
+                setUser(role);
+                localStorage.setItem('tm_user', role);
+            };
+
+            const handleLogout = () => {
+                setUser(null);
+                localStorage.removeItem('tm_user');
+            };
 
             return (
-                <div className="root-inner">
-                    {user ? (
-                        <Dashboard user={user} onLogout={handleLogout} />
-                    ) : (
-                        <Login onLogin={handleLogin} />
-                    )}
+                <div className="app-container">
+                    {!user ? <Login onLogin={handleLogin} /> : <Dashboard user={user} onLogout={handleLogout} />}
                 </div>
             );
         }
