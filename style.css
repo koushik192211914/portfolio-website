@@ -158,12 +158,29 @@ body {
 }
 
 .task-card.completed {
-    opacity: 0.6;
+    opacity: 0.8;
+    border-color: rgba(52, 211, 153, 0.2);
+    background: rgba(52, 211, 153, 0.03);
 }
 
 .task-card.completed h3 {
     text-decoration: line-through;
     color: var(--text-secondary);
+}
+
+.completed-badge {
+    position: absolute;
+    bottom: 5.5rem;
+    right: 1.75rem;
+    background: var(--done);
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    padding: 0.2rem 0.6rem;
+    border-radius: 0.4rem;
+    letter-spacing: 0.05em;
+    box-shadow: 0 4px 10px rgba(52, 211, 153, 0.3);
 }
 
 .task-card:hover {

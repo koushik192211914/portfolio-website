@@ -140,6 +140,7 @@
                             <div className="role-tag">
                                 <span className="icon">👤</span> {task.role === 'All' ? 'Everyone' : task.role}
                             </div>
+                            {task.status === 'done' && <div className="completed-badge">✓ Completed</div>}
                             <h3>{task.title}</h3>
                             <p>{task.desc}</p>
                             <span className="due-date">{task.due === 'New' && task.status === 'done' ? 'Completed' : task.due}</span>
