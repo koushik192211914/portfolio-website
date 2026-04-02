@@ -24,46 +24,89 @@
     <script type="text/babel">
         const { useState } = React;
 
-        function App() {
+        function Login({ onLogin }) {
             return (
-                <main class="app-container">
-                    <header class="app-header">
+                <div className="login-container">
+                    <div className="login-card">
+                        <h1>Welcome Back</h1>
+                        <p>Select your profile to continue</p>
+                        <div className="role-buttons">
+                            <button onClick={() => onLogin('Admin')} className="role-btn admin">
+                                <span className="icon">🛡️</span> Admin
+                            </button>
+                            <button onClick={() => onLogin('User1')} className="role-btn user">
+                                <span className="icon">👤</span> User1
+                            </button>
+                            <button onClick={() => onLogin('User2')} className="role-btn user">
+                                <span className="icon">👤</span> User2
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        function Dashboard({ user, onLogout }) {
+            return (
+                <main className="app-container">
+                    <header className="app-header">
+                        <div className="user-info">
+                            <span>Welcome, <strong>{user}</strong></span>
+                            <button onClick={onLogout} className="logout-btn">Logout</button>
+                        </div>
                         <h1>Task Manager Dashboard</h1>
                         <p>Stay organized, stay productive.</p>
                     </header>
 
-                    <section class="task-sections">
-                        <div class="task-column">
+                    <section className="task-sections">
+                        <div className="task-column">
                             <h2>To Do</h2>
-                            <div class="task-card">
-                                <div class="task-status status-todo"></div>
+                            <div className="task-card">
+                                <div className="task-status status-todo"></div>
                                 <h3>Project Research</h3>
                                 <p>Analyze competitor task management tools.</p>
-                                <span class="due-date">Due: Apr 5</span>
+                                <span className="due-date">Due: Apr 5</span>
                             </div>
                         </div>
 
-                        <div class="task-column">
+                        <div className="task-column">
                             <h2>In Progress</h2>
-                            <div class="task-card">
-                                <div class="task-status status-progress"></div>
+                            <div className="task-card">
+                                <div className="task-status status-progress"></div>
                                 <h3>UI Design</h3>
                                 <p>Drafting the glassmorphism layout for the dashboard.</p>
-                                <span class="due-date">Due: Apr 3</span>
+                                <span className="due-date">Due: Apr 3</span>
                             </div>
                         </div>
 
-                        <div class="task-column">
+                        <div className="task-column">
                             <h2>Completed</h2>
-                            <div class="task-card">
-                                <div class="task-status status-done"></div>
+                            <div className="task-card">
+                                <div className="task-status status-done"></div>
                                 <h3>Requirement Gathering</h3>
                                 <p>Finalized the core feature list for V1.</p>
-                                <span class="due-date">Completed</span>
+                                <span className="due-date">Completed</span>
                             </div>
                         </div>
                     </section>
                 </main>
+            );
+        }
+
+        function App() {
+            const [user, setUser] = useState(null);
+
+            const handleLogin = (role) => setUser(role);
+            const handleLogout = () => setUser(null);
+
+            return (
+                <div className="root-inner">
+                    {user ? (
+                        <Dashboard user={user} onLogout={handleLogout} />
+                    ) : (
+                        <Login onLogin={handleLogin} />
+                    )}
+                </div>
             );
         }
 
