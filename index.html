@@ -108,13 +108,15 @@
                         <button className="action-btn delete-btn" onClick={() => onDelete(task.id)} title="Delete Task">×</button>
                     </div>
                     <div className={`task-status status-${task.status}`}></div>
-                    <div className="role-tag">
-                        <span className="icon">👤</span> {task.role === 'All' ? 'Everyone' : task.role}
-                    </div>
                     {task.status === 'done' && <div className="completed-badge">✓ Completed</div>}
                     <h3>{task.title}</h3>
                     <p>{task.desc}</p>
-                    <span className="due-date">{task.due === 'New' && task.status === 'done' ? 'Completed' : task.due}</span>
+                    <div className="task-meta">
+                        <div className="role-tag">
+                            <span className="icon">👤</span> {task.role === 'All' ? 'Everyone' : task.role}
+                        </div>
+                        <span className="due-date">{task.due === 'New' && task.status === 'done' ? 'Completed' : task.due}</span>
+                    </div>
                 </div>
             );
         }
@@ -205,19 +207,25 @@
 
             const filteredTasks = tasks.filter(task => task.role === 'All' || task.role === user);
 
-            const renderColumn = (status, title) => (
-                <div className="task-column">
-                    <h2>{title}</h2>
-                    {filteredTasks.filter(t => t.status === status).map(task => (
-                        <TaskCard
-                            key={task.id}
-                            task={task}
-                            onToggleComplete={handleToggleComplete}
-                            onDelete={handleDeleteTask}
-                        />
-                    ))}
-                </div>
-            );
+            const renderColumn = (status, title) => {
+                const columnTasks = filteredTasks.filter(t => t.status === status);
+                return (
+                    <div className="task-column">
+                        <div className="column-header">
+                            <h2>{title}</h2>
+                            <span className="task-count">{columnTasks.length}</span>
+                        </div>
+                        {columnTasks.map(task => (
+                            <TaskCard
+                                key={task.id}
+                                task={task}
+                                onToggleComplete={handleToggleComplete}
+                                onDelete={handleDeleteTask}
+                            />
+                        ))}
+                    </div>
+                );
+            };
 
             return (
                 <div className="app-layout">
