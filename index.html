@@ -74,7 +74,7 @@
             );
         }
 
-        function MainHeader({ user }) {
+        function MainHeader({ user, onLogout }) {
             return (
                 <header className="main-header">
                     <div className="header-left">
@@ -89,7 +89,10 @@
                                 </span>
                             </div>
                             <div className="user-details">
-                                <span className="user-name">{user} Profile</span>
+                                <div className="user-top">
+                                    <span className="user-name">{user} Profile</span>
+                                    <button onClick={onLogout} className="logout-link">Logout</button>
+                                </div>
                                 <span className="user-status">Online</span>
                             </div>
                         </div>
@@ -231,7 +234,7 @@
                 <div className="app-layout">
                     <Sidebar onLogout={onLogout} onReset={handleResetTasks} />
                     <main className="main-content">
-                        <MainHeader user={user} />
+                        <MainHeader user={user} onLogout={onLogout} />
                         <TaskForm onAddTask={handleAddTask} userRole={user} />
                         <div className="task-sections">
                             {renderColumn('todo', 'To Do')}
@@ -252,8 +255,10 @@
             };
 
             const handleLogout = () => {
-                setUser(null);
-                localStorage.removeItem('tm_user');
+                if (confirm('Are you sure you want to log out?')) {
+                    setUser(null);
+                    localStorage.removeItem('tm_user');
+                }
             };
 
             return (

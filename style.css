@@ -372,6 +372,32 @@ body {
     gap: 1.25rem;
 }
 
+.user-top {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.logout-link {
+    background: transparent;
+    border: none;
+    color: var(--accent-pink);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    text-decoration: underline;
+    opacity: 0.7;
+    transition: 0.3s;
+    padding: 0;
+}
+
+.logout-link:hover {
+    opacity: 1;
+    color: #ff4d4d;
+}
+
 .role-btn {
     flex: 1;
     background: rgba(255, 255, 255, 0.05);
