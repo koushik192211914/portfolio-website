@@ -428,6 +428,62 @@ body {
 }
 
 /* Responsive Overrides */
+/* Task Creation Bar */
+.task-creation-bar {
+    margin-bottom: 3.5rem;
+}
+
+.add-task-form {
+    display: flex;
+    gap: 1rem;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 0.75rem;
+    border-radius: 1.5rem;
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.task-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text-primary);
+    padding: 0 1.5rem;
+    font-size: 1.1rem;
+    font-family: 'Inter', sans-serif;
+}
+
+.task-input::placeholder {
+    color: var(--text-secondary);
+    opacity: 0.6;
+}
+
+.add-task-btn {
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+    color: white;
+    border: none;
+    padding: 0.8rem 1.8rem;
+    border-radius: 1.25rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 10px 20px rgba(56, 189, 248, 0.2);
+}
+
+.add-task-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 30px rgba(129, 140, 248, 0.4);
+}
+
+.add-task-btn .icon {
+    font-size: 1.2rem;
+}
+
 @media (max-width: 1024px) {
     .sidebar {
         width: 80px;

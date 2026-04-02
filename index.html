@@ -46,8 +46,36 @@
             );
         }
 
+        function TaskForm({ onAddTask }) {
+            const [title, setTitle] = useState('');
+
+            const handleSubmit = (e) => {
+                e.preventDefault();
+                if (!title.trim()) return;
+                onAddTask(title);
+                setTitle('');
+            };
+
+            return (
+                <div className="task-creation-bar">
+                    <form onSubmit={handleSubmit} className="add-task-form">
+                        <input
+                            type="text"
+                            placeholder="What needs to be done?"
+                            value={title}
+                            onChange={(e) => setTitle(e.target.value)}
+                            className="task-input"
+                        />
+                        <button type="submit" className="add-task-btn">
+                            <span className="icon">＋</span> Add Task
+                        </button>
+                    </form>
+                </div>
+            );
+        }
+
         function Dashboard({ user, onLogout }) {
-            const allTasks = [
+            const [tasks, setTasks] = useState([
                 { id: 1, title: 'System Maintenance', desc: 'Server health check and updates.', status: 'todo', role: 'Admin', due: 'Apr 10' },
                 { id: 2, title: 'Project Research', desc: 'Analyze competitor task management tools.', status: 'todo', role: 'All', due: 'Apr 5' },
                 { id: 3, title: 'UI Design', desc: 'Drafting the glassmorphism layout.', status: 'progress', role: 'All', due: 'Apr 3' },
@@ -55,9 +83,21 @@
                 { id: 5, title: 'Requirement Gathering', desc: 'Finalized the core feature list.', status: 'done', role: 'All', due: 'Completed' },
                 { id: 6, title: 'API Integration', desc: 'Connect the frontend with the mock API.', status: 'todo', role: 'User1', due: 'Apr 8' },
                 { id: 7, title: 'Database Cleanup', desc: 'Remove redundant records from dev db.', status: 'progress', role: 'User2', due: 'Apr 7' }
-            ];
+            ]);
 
-            const filteredTasks = allTasks.filter(task => task.role === 'All' || task.role === user);
+            const handleAddTask = (title) => {
+                const newTask = {
+                    id: Date.now(),
+                    title: title,
+                    desc: 'Added via dashboard quick input.',
+                    status: 'todo',
+                    role: user === 'Admin' ? 'All' : user,
+                    due: 'New'
+                };
+                setTasks([newTask, ...tasks]);
+            };
+
+            const filteredTasks = tasks.filter(task => task.role === 'All' || task.role === user);
 
             const renderColumn = (status, title) => (
                 <div className="task-column">
@@ -103,6 +143,8 @@
                                 </div>
                             </div>
                         </header>
+
+                        <TaskForm onAddTask={handleAddTask} />
 
                         <section className="task-sections">
                             {renderColumn('todo', 'To Do')}
