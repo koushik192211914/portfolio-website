@@ -22,7 +22,36 @@
     <div id="root"></div>
 
     <script type="text/babel">
-        const { useState, useEffect } = React;
+        const { useState, useEffect, useMemo, Component } = React;
+
+        class ErrorBoundary extends Component {
+            constructor(props) {
+                super(props);
+                this.state = { hasError: false };
+            }
+
+            static getDerivedStateFromError(error) {
+                return { hasError: true };
+            }
+
+            render() {
+                if (this.state.hasError) {
+                    return (
+                        <div className="error-fallback">
+                            <div className="error-card">
+                                <h2>Oops! Something went wrong.</h2>
+                                <p>The dashboard encountered an unexpected error.</p>
+                                <button onClick={() => {
+                                    localStorage.removeItem('tm_tasks');
+                                    window.location.reload();
+                                }} className="reset-btn">Reset & Recover</button>
+                            </div>
+                        </div>
+                    );
+                }
+                return this.props.children;
+            }
+        }
 
         function Login({ onLogin }) {
             return (
@@ -184,8 +213,15 @@
 
         function Dashboard({ user, onLogout }) {
             const [tasks, setTasks] = useState(() => {
-                const savedTasks = localStorage.getItem('tm_tasks');
-                if (savedTasks) return JSON.parse(savedTasks);
+                try {
+                    const savedTasks = localStorage.getItem('tm_tasks');
+                    if (savedTasks) {
+                        const parsed = JSON.parse(savedTasks);
+                        if (Array.isArray(parsed)) return parsed;
+                    }
+                } catch (e) {
+                    console.error("Failed to load tasks from localStorage:", e);
+                }
                 return INITIAL_TASKS;
             });
 
@@ -194,6 +230,12 @@
             }, [tasks]);
 
             const handleAddTask = (title, role) => {
+                const isDuplicate = tasks.some(t => t.title.toLowerCase() === title.toLowerCase());
+                if (isDuplicate) {
+                    alert('A task with this title already exists!');
+                    return;
+                }
+
                 const newTask = {
                     id: Date.now(),
                     title: title,
@@ -278,9 +320,11 @@
             };
 
             return (
-                <div className="app-container">
-                    {!user ? <Login onLogin={handleLogin} /> : <Dashboard user={user} onLogout={handleLogout} />}
-                </div>
+                <ErrorBoundary>
+                    <div className="app-container">
+                        {!user ? <Login onLogin={handleLogin} /> : <Dashboard user={user} onLogout={handleLogout} />}
+                    </div>
+                </ErrorBoundary>
             );
         }
 
