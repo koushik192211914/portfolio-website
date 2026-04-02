@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskMaster | Efficient Task Management</title>
+    <!-- Google Fonts: Outfit for headers, Inter for body -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="root">
+        <!-- Main Content Area -->
+        <main class="app-container">
+            <header class="app-header">
+                <h1>TaskMaster</h1>
+                <p>Stay organized, stay productive.</p>
+            </header>
+
+            <section class="task-sections">
+                <div class="task-column">
+                    <h2>To Do</h2>
+                    <div class="task-card">
+                        <div class="task-status status-todo"></div>
+                        <h3>Project Research</h3>
+                        <p>Analyze competitor task management tools.</p>
+                        <span class="due-date">Due: Apr 5</span>
+                    </div>
+                </div>
+
+                <div class="task-column">
+                    <h2>In Progress</h2>
+                    <div class="task-card">
+                        <div class="task-status status-progress"></div>
+                        <h3>UI Design</h3>
+                        <p>Drafting the glassmorphism layout for the dashboard.</p>
+                        <span class="due-date">Due: Apr 3</span>
+                    </div>
+                </div>
+
+                <div class="task-column">
+                    <h2>Completed</h2>
+                    <div class="task-card">
+                        <div class="task-status status-done"></div>
+                        <h3>Requirement Gathering</h3>
+                        <p>Finalized the core feature list for V1.</p>
+                        <span class="due-date">Completed</span>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+</body>
+</html>
