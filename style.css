@@ -547,6 +547,90 @@ body {
 }
 
 /* Responsive Overrides */
+/* --- RESPONSIVENESS --- */
+
+@media (max-width: 1200px) {
+    .task-sections {
+        gap: 1.5rem;
+    }
+}
+
+@media (max-width: 1024px) {
+    .app-layout {
+        grid-template-columns: 240px 1s;
+    }
+
+    .header-left h1 {
+        font-size: 2.2rem;
+    }
+}
+
+@media (max-width: 992px) {
+    .task-sections {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+
+    .task-column {
+        min-width: 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .app-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .sidebar {
+        display: none;
+        /* For simplicity, hide sidebar on mobile or could use a toggle */
+    }
+
+    .main-content {
+        padding: 1.5rem;
+    }
+
+    .main-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .header-right {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .add-task-form {
+        flex-direction: column;
+    }
+
+    .role-select,
+    .add-task-btn {
+        width: 100%;
+    }
+
+    .header-left h1 {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .main-content {
+        padding: 1rem;
+    }
+
+    .task-card {
+        padding: 1.25rem;
+    }
+
+    .task-actions {
+        top: 1rem;
+        right: 1rem;
+    }
+}
+
 /* Task Creation Bar */
 .task-creation-bar {
     margin-bottom: 3.5rem;
