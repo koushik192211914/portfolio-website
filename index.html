@@ -67,6 +67,7 @@
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
                             className="task-input"
+                            required
                         />
                         {userRole === 'Admin' && (
                             <select
