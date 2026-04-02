@@ -46,14 +46,16 @@
             );
         }
 
-        function TaskForm({ onAddTask }) {
+        function TaskForm({ onAddTask, userRole }) {
             const [title, setTitle] = useState('');
+            const [assignedRole, setAssignedRole] = useState(userRole === 'Admin' ? 'All' : userRole);
 
             const handleSubmit = (e) => {
                 e.preventDefault();
                 if (!title.trim()) return;
-                onAddTask(title);
+                onAddTask(title, assignedRole);
                 setTitle('');
+                if (userRole === 'Admin') setAssignedRole('All');
             };
 
             return (
@@ -66,6 +68,18 @@
                             onChange={(e) => setTitle(e.target.value)}
                             className="task-input"
                         />
+                        {userRole === 'Admin' && (
+                            <select
+                                value={assignedRole}
+                                onChange={(e) => setAssignedRole(e.target.value)}
+                                className="role-select"
+                            >
+                                <option value="All">Assign to All</option>
+                                <option value="Admin">Admin Only</option>
+                                <option value="User1">User 1</option>
+                                <option value="User2">User 2</option>
+                            </select>
+                        )}
                         <button type="submit" className="add-task-btn">
                             <span className="icon">＋</span> Add Task
                         </button>
@@ -85,13 +99,13 @@
                 { id: 7, title: 'Database Cleanup', desc: 'Remove redundant records from dev db.', status: 'progress', role: 'User2', due: 'Apr 7' }
             ]);
 
-            const handleAddTask = (title) => {
+            const handleAddTask = (title, role) => {
                 const newTask = {
                     id: Date.now(),
                     title: title,
-                    desc: 'Added via dashboard quick input.',
+                    desc: `Assigned to ${role}.`,
                     status: 'todo',
-                    role: user === 'Admin' ? 'All' : user,
+                    role: role,
                     due: 'New'
                 };
                 setTasks([newTask, ...tasks]);
@@ -149,7 +163,7 @@
                             </div>
                         </header>
 
-                        <TaskForm onAddTask={handleAddTask} />
+                        <TaskForm onAddTask={handleAddTask} userRole={user} />
 
                         <section className="task-sections">
                             {renderColumn('todo', 'To Do')}

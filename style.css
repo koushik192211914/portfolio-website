@@ -490,6 +490,28 @@ body {
     opacity: 0.6;
 }
 
+.role-select {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-border);
+    color: var(--text-primary);
+    padding: 0.5rem 1rem;
+    border-radius: 1rem;
+    outline: none;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    transition: 0.3s;
+}
+
+.role-select:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.role-select option {
+    background: var(--bg-color);
+    color: var(--text-primary);
+}
+
 .add-task-btn {
     background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
     color: white;
