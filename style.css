@@ -269,51 +269,202 @@ body {
     font-size: 1.4rem;
 }
 
-/* User Info & Logout */
-.user-info {
+/* Layout Structure */
+.app-layout {
     display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    gap: 1.5rem;
-    margin-bottom: 2rem;
-    font-size: 0.95rem;
+    width: 100%;
+    min-height: 100vh;
+}
+
+.sidebar {
+    width: 280px;
+    background: var(--card-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-right: 1px solid var(--glass-border);
+    padding: 2.5rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    height: 100vh;
+}
+
+.sidebar-logo {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 3.5rem;
+    padding-left: 1rem;
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    flex: 1;
+}
+
+.nav-item {
+    text-decoration: none;
     color: var(--text-secondary);
+    padding: 1rem;
+    border-radius: 1rem;
+    font-weight: 500;
+    transition: 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
 }
 
-.user-info strong {
-    color: var(--accent-blue);
+.nav-item:hover,
+.nav-item.active {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-primary);
 }
 
-.logout-btn {
+.nav-item.active {
+    border: 1px solid var(--glass-border);
+}
+
+.nav-item .icon {
+    font-size: 1.2rem;
+}
+
+.sidebar-footer {
+    padding-top: 2rem;
+}
+
+.logout-btn-large {
+    width: 100%;
+    padding: 1rem;
     background: rgba(244, 114, 182, 0.1);
     border: 1px solid rgba(244, 114, 182, 0.2);
     color: var(--accent-pink);
-    padding: 0.4rem 1rem;
-    border-radius: 2rem;
-    cursor: pointer;
+    border-radius: 1rem;
     font-weight: 600;
+    cursor: pointer;
     transition: 0.3s;
 }
 
-.logout-btn:hover {
+.logout-btn-large:hover {
     background: var(--accent-pink);
     color: white;
-    box-shadow: 0 0 15px rgba(244, 114, 182, 0.4);
+}
+
+/* Main Content Area */
+.main-content {
+    flex: 1;
+    margin-left: 280px;
+    padding: 3rem 4rem;
+}
+
+.main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4rem;
+}
+
+.header-left h1 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 2.2rem;
+    margin-bottom: 0.25rem;
+}
+
+.header-left p {
+    color: var(--text-secondary);
+    font-size: 1rem;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.notification-bell {
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text-secondary);
+    padding: 0.5rem;
+    border-radius: 50%;
+    transition: 0.3s;
+}
+
+.notification-bell:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-primary);
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 0.5rem 0.5rem 0.5rem 1.25rem;
+    border-radius: 3rem;
+    border: 1px solid var(--glass-border);
+}
+
+.user-name {
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: white;
+}
+
+/* Responsive Overrides */
+@media (max-width: 1024px) {
+    .sidebar {
+        width: 80px;
+        padding: 2.5rem 0.75rem;
+    }
+
+    .sidebar-logo,
+    .nav-item span:not(.icon),
+    .logout-btn-large {
+        display: none;
+    }
+
+    .main-content {
+        margin-left: 80px;
+        padding: 2rem;
+    }
 }
 
 @media (max-width: 768px) {
-    .app-header h1 {
-        font-size: 3rem;
+    .app-layout {
+        flex-direction: column;
     }
 
-    .app-container {
-        margin: 1rem;
-        padding: 2rem 1.5rem;
-        border-radius: 1.5rem;
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        padding: 1.5rem;
     }
 
-    .login-card {
-        padding: 2.5rem;
-        margin: 1.5rem;
+    .sidebar-nav {
+        flex-direction: row;
+        justify-content: center;
+    }
+
+    .main-content {
+        margin-left: 0;
+        padding: 1.5rem;
     }
 }

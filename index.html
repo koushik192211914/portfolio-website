@@ -75,22 +75,42 @@
             );
 
             return (
-                <main className="app-container">
-                    <header className="app-header">
-                        <div className="user-info">
-                            <span>Welcome, <strong>{user}</strong></span>
-                            <button onClick={onLogout} className="logout-btn">Logout</button>
+                <div className="app-layout">
+                    <aside className="sidebar">
+                        <div className="sidebar-logo">TaskMaster</div>
+                        <nav className="sidebar-nav">
+                            <a href="#" className="nav-item active"><span className="icon">📋</span> Tasks</a>
+                            <a href="#" className="nav-item"><span className="icon">📅</span> Calendar</a>
+                            <a href="#" className="nav-item"><span className="icon">📊</span> Analytics</a>
+                            <a href="#" className="nav-item"><span className="icon">⚙️</span> Settings</a>
+                        </nav>
+                        <div className="sidebar-footer">
+                            <button onClick={onLogout} className="logout-btn-large">Logout</button>
                         </div>
-                        <h1>Task Manager Dashboard</h1>
-                        <p>{user === 'Admin' ? 'Administrator Control Panel' : 'Collaborative Workspace'}</p>
-                    </header>
+                    </aside>
 
-                    <section className="task-sections">
-                        {renderColumn('todo', 'To Do')}
-                        {renderColumn('progress', 'In Progress')}
-                        {renderColumn('done', 'Completed')}
-                    </section>
-                </main>
+                    <main className="main-content">
+                        <header className="main-header">
+                            <div className="header-left">
+                                <h1>Dashboard</h1>
+                                <p>{user === 'Admin' ? 'Administrator Control Panel' : 'Collaborative Workspace'}</p>
+                            </div>
+                            <div className="header-right">
+                                <div className="notification-bell">🔔</div>
+                                <div className="user-profile">
+                                    <span className="user-name">{user}</span>
+                                    <div className="user-avatar">{user[0]}</div>
+                                </div>
+                            </div>
+                        </header>
+
+                        <section className="task-sections">
+                            {renderColumn('todo', 'To Do')}
+                            {renderColumn('progress', 'In Progress')}
+                            {renderColumn('done', 'Completed')}
+                        </section>
+                    </main>
+                </div>
             );
         }
 
