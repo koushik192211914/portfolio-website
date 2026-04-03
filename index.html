@@ -76,13 +76,13 @@
         }
 
         const INITIAL_TASKS = [
-            { id: 1, title: 'System Maintenance', desc: 'Server health check and updates.', status: 'todo', role: 'Admin', due: '2026-04-01' },
-            { id: 2, title: 'Project Research', desc: 'Analyze competitor task management tools.', status: 'todo', role: 'All', due: '2026-04-02' },
-            { id: 3, title: 'UI Design', desc: 'Drafting the glassmorphism layout.', status: 'progress', role: 'All', due: '2026-04-03' },
-            { id: 4, title: 'Security Audit', desc: 'Review user access logs and permissions.', status: 'progress', role: 'Admin', due: '2026-04-06' },
-            { id: 5, title: 'Requirement Gathering', desc: 'Finalized the core feature list.', status: 'done', role: 'All', due: 'Completed' },
-            { id: 6, title: 'API Integration', desc: 'Connect the frontend with the mock API.', status: 'todo', role: 'User1', due: '2026-04-08' },
-            { id: 7, title: 'Database Cleanup', desc: 'Remove redundant records from dev db.', status: 'progress', role: 'User2', due: '2026-04-07' }
+            { id: 1, title: 'System Maintenance', desc: 'Server health check and updates.', status: 'Pending', role: 'Admin', due: '2026-04-01', priority: 'High' },
+            { id: 2, title: 'Project Research', desc: 'Analyze competitor task management tools.', status: 'Pending', role: 'All', due: '2026-04-02', priority: 'Medium' },
+            { id: 3, title: 'UI Design', desc: 'Drafting the glassmorphism layout.', status: 'Pending', role: 'All', due: '2026-04-03', priority: 'High' },
+            { id: 4, title: 'Security Audit', desc: 'Review user access logs and permissions.', status: 'Pending', role: 'Admin', due: '2026-04-06', priority: 'Medium' },
+            { id: 5, title: 'Requirement Gathering', desc: 'Finalized the core feature list.', status: 'Completed', role: 'All', due: 'Completed', priority: 'Low' },
+            { id: 6, title: 'API Integration', desc: 'Connect the frontend with the mock API.', status: 'Pending', role: 'User1', due: '2026-04-08', priority: 'Medium' },
+            { id: 7, title: 'Database Cleanup', desc: 'Remove redundant records from dev db.', status: 'Pending', role: 'User2', due: '2026-04-07', priority: 'Low' }
         ];
 
         function Sidebar({ onLogout, onReset }) {
@@ -154,20 +154,25 @@
 
         function TaskCard({ task, onToggleComplete, onDelete }) {
             const today = new Date().toISOString().split('T')[0];
-            const isOverdue = task.status !== 'done' && task.due !== 'Completed' && task.due < today;
+            const isOverdue = task.status !== 'Completed' && task.due !== 'Completed' && task.due < today;
 
             return (
-                <div key={task.id} className={`task-card ${task.status === 'done' ? 'completed' : ''} ${isOverdue ? 'overdue' : ''}`}>
+                <div key={task.id} className={`task-card ${task.status === 'Completed' ? 'completed' : ''} ${isOverdue ? 'overdue' : ''}`}>
                     <div className="task-actions">
                         <button className="action-btn complete-btn" onClick={() => onToggleComplete(task.id)} title="Toggle Complete">
-                            {task.status === 'done' ? '↩️' : '✔'}
+                            {task.status === 'Completed' ? '↩️' : '✔'}
                         </button>
                         <button className="action-btn delete-btn" onClick={() => onDelete(task.id)} title="Delete Task">×</button>
                     </div>
-                    <div className={`task-status status-${task.status}`}></div>
-                    {task.status === 'done' && <div className="completed-badge">✓ Completed</div>}
+                    <div className={`task-status status-${(task.status || 'Pending').toLowerCase()}`}></div>
+                    {task.status === 'Completed' && <div className="completed-badge">✓ Completed</div>}
                     {isOverdue && <div className="overdue-badge">⚠️ Overdue</div>}
-                    <h3>{task.title}</h3>
+                    <div className="task-header-row">
+                        <h3>{task.title}</h3>
+                        <span className={`priority-tag p-${(task.priority || 'Medium').toLowerCase()}`}>
+                            {task.priority || 'Medium'}
+                        </span>
+                    </div>
                     <span className="due-date">{task.due === 'New' && task.status === 'done' ? 'Completed' : task.due}</span>
                     <p>{task.desc}</p>
                     <div className="task-meta">
@@ -183,13 +188,15 @@
             const [title, setTitle] = useState('');
             const [assignedRole, setAssignedRole] = useState(userRole === 'Admin' ? 'All' : userRole);
             const [dueDate, setDueDate] = useState('');
+            const [priority, setPriority] = useState('Medium');
 
             const handleSubmit = (e) => {
                 e.preventDefault();
                 if (!title.trim() || !dueDate) return;
-                onAddTask(title, assignedRole, dueDate);
+                onAddTask(title, assignedRole, dueDate, priority);
                 setTitle('');
                 setDueDate('');
+                setPriority('Medium');
                 if (userRole === 'Admin') setAssignedRole('All');
             };
 
@@ -222,6 +229,15 @@
                             className="date-input"
                             required
                         />
+                        <select
+                            value={priority}
+                            onChange={(e) => setPriority(e.target.value)}
+                            className="priority-select"
+                        >
+                            <option value="High">High Priority</option>
+                            <option value="Medium">Medium Priority</option>
+                            <option value="Low">Low Priority</option>
+                        </select>
                         <button type="submit" className="add-task-btn">
                             <span className="icon">+</span> Add Task
                         </button>
@@ -249,7 +265,7 @@
                 localStorage.setItem('tm_tasks', JSON.stringify(tasks));
             }, [tasks]);
 
-            const handleAddTask = (title, role, dueDate) => {
+            const handleAddTask = (title, role, dueDate, priority) => {
                 const isDuplicate = tasks.some(t => t.title.toLowerCase() === title.toLowerCase());
                 if (isDuplicate) {
                     alert('A task with this title already exists!');
@@ -260,9 +276,10 @@
                     id: Date.now(),
                     title: title,
                     desc: `Assigned to ${role}.`,
-                    status: 'todo',
+                    status: 'Pending',
                     role: role,
-                    due: dueDate
+                    due: dueDate,
+                    priority: priority
                 };
                 setTasks([newTask, ...tasks]);
             };
@@ -274,7 +291,7 @@
             const handleToggleComplete = (id) => {
                 setTasks(tasks.map(task =>
                     task.id === id
-                        ? { ...task, status: task.status === 'done' ? 'todo' : 'done' }
+                        ? { ...task, status: task.status === 'Completed' ? 'Pending' : 'Completed' }
                         : task
                 ));
             };
@@ -333,10 +350,9 @@
                             onSearchChange={setSearchTerm}
                         />
                         <TaskForm onAddTask={handleAddTask} userRole={user} />
-                        <div className="task-sections">
-                            {renderColumn('todo', 'To Do')}
-                            {renderColumn('progress', 'In Progress')}
-                            {renderColumn('done', 'Completed')}
+                        <div className="task-sections binary-layout">
+                            {renderColumn('Pending', 'Pending Tasks')}
+                            {renderColumn('Completed', 'Completed Tasks')}
                         </div>
                     </main>
                 </div>
