@@ -13,6 +13,7 @@
     --container-gap: 2rem;
     --card-padding: 1.75rem;
     --section-margin: 3.5rem;
+    --transition-main: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 * {
@@ -247,9 +248,14 @@ body {
 }
 
 .task-card:hover {
-    transform: translateY(-8px) scale(1.01);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
+    border-color: rgba(255, 255, 255, 0.3);
+    background: rgba(30, 41, 59, 0.9);
+}
+
+.task-card:active {
+    transform: translateY(-5px) scale(0.99);
 }
 
 .task-card h3 {
@@ -330,8 +336,17 @@ body {
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: 0.2s ease;
+    transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     font-size: 1rem;
+}
+
+.action-btn:hover {
+    transform: scale(1.15);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.action-btn:active {
+    transform: scale(0.9);
 }
 
 .complete-btn:hover {
@@ -669,10 +684,22 @@ body {
     padding: 1rem;
     border-radius: 1rem;
     font-weight: 500;
-    transition: 0.3s;
+    transition: var(--transition-main);
     display: flex;
     align-items: center;
     gap: 1rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.nav-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-primary);
+    transform: translateX(5px);
+}
+
+.nav-item:active {
+    transform: translateX(2px) scale(0.98);
 }
 
 .nav-item:hover,
@@ -712,8 +739,12 @@ body {
 .logout-btn-large:hover {
     background: var(--accent-pink);
     color: white;
-    transform: translateY(-2px);
+    transform: translateY(-2px) scale(1.02);
     box-shadow: 0 10px 20px rgba(244, 114, 182, 0.2);
+}
+
+.logout-btn-large:active {
+    transform: translateY(0) scale(0.98);
 }
 
 .logout-header-btn {
@@ -766,10 +797,14 @@ body {
 }
 
 .stat-card:hover {
-    transform: translateY(-5px);
-    background: rgba(255, 255, 255, 0.05);
-    border-color: rgba(255, 255, 255, 0.2);
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+    transform: translateY(-8px) scale(1.03);
+    background: rgba(255, 255, 255, 0.07);
+    border-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+}
+
+.stat-card:active {
+    transform: translateY(-4px) scale(0.99);
 }
 
 .stat-card::after {
@@ -1229,12 +1264,22 @@ body {
     border-radius: 1rem;
     font-weight: 600;
     cursor: pointer;
-    transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: var(--transition-main);
     display: flex;
     align-items: center;
     gap: 0.5rem;
     box-shadow: 0 10px 20px rgba(99, 102, 241, 0.2);
     animation: shimmer 4s infinite linear;
+}
+
+.add-task-btn:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 15px 30px rgba(99, 102, 241, 0.4);
+    filter: brightness(1.2);
+}
+
+.add-task-btn:active {
+    transform: translateY(-1px) scale(0.98);
 }
 
 @keyframes shimmer {
