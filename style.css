@@ -319,6 +319,33 @@ body {
     color: var(--text-secondary);
 }
 
+.task-card.overdue {
+    border-color: rgba(244, 114, 182, 0.4);
+    background: rgba(244, 114, 182, 0.05);
+    box-shadow: 0 10px 30px rgba(244, 114, 182, 0.1);
+}
+
+.task-card.overdue .due-date {
+    color: var(--accent-pink);
+    background: rgba(244, 114, 182, 0.1);
+    border-color: rgba(244, 114, 182, 0.2);
+}
+
+.overdue-badge {
+    position: absolute;
+    bottom: 5.5rem;
+    right: 1.75rem;
+    background: var(--accent-pink);
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    padding: 0.2rem 0.6rem;
+    border-radius: 0.4rem;
+    letter-spacing: 0.05em;
+    box-shadow: 0 4px 10px rgba(244, 114, 182, 0.3);
+}
+
 .completed-badge {
     position: absolute;
     bottom: 5.5rem;

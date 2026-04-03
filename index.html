@@ -76,13 +76,13 @@
         }
 
         const INITIAL_TASKS = [
-            { id: 1, title: 'System Maintenance', desc: 'Server health check and updates.', status: 'todo', role: 'Admin', due: 'Apr 10' },
-            { id: 2, title: 'Project Research', desc: 'Analyze competitor task management tools.', status: 'todo', role: 'All', due: 'Apr 5' },
-            { id: 3, title: 'UI Design', desc: 'Drafting the glassmorphism layout.', status: 'progress', role: 'All', due: 'Apr 3' },
-            { id: 4, title: 'Security Audit', desc: 'Review user access logs and permissions.', status: 'progress', role: 'Admin', due: 'Apr 6' },
+            { id: 1, title: 'System Maintenance', desc: 'Server health check and updates.', status: 'todo', role: 'Admin', due: '2026-04-01' },
+            { id: 2, title: 'Project Research', desc: 'Analyze competitor task management tools.', status: 'todo', role: 'All', due: '2026-04-02' },
+            { id: 3, title: 'UI Design', desc: 'Drafting the glassmorphism layout.', status: 'progress', role: 'All', due: '2026-04-03' },
+            { id: 4, title: 'Security Audit', desc: 'Review user access logs and permissions.', status: 'progress', role: 'Admin', due: '2026-04-06' },
             { id: 5, title: 'Requirement Gathering', desc: 'Finalized the core feature list.', status: 'done', role: 'All', due: 'Completed' },
-            { id: 6, title: 'API Integration', desc: 'Connect the frontend with the mock API.', status: 'todo', role: 'User1', due: 'Apr 8' },
-            { id: 7, title: 'Database Cleanup', desc: 'Remove redundant records from dev db.', status: 'progress', role: 'User2', due: 'Apr 7' }
+            { id: 6, title: 'API Integration', desc: 'Connect the frontend with the mock API.', status: 'todo', role: 'User1', due: '2026-04-08' },
+            { id: 7, title: 'Database Cleanup', desc: 'Remove redundant records from dev db.', status: 'progress', role: 'User2', due: '2026-04-07' }
         ];
 
         function Sidebar({ onLogout, onReset }) {
@@ -153,8 +153,11 @@
         }
 
         function TaskCard({ task, onToggleComplete, onDelete }) {
+            const today = new Date().toISOString().split('T')[0];
+            const isOverdue = task.status !== 'done' && task.due !== 'Completed' && task.due < today;
+
             return (
-                <div key={task.id} className={`task-card ${task.status === 'done' ? 'completed' : ''}`}>
+                <div key={task.id} className={`task-card ${task.status === 'done' ? 'completed' : ''} ${isOverdue ? 'overdue' : ''}`}>
                     <div className="task-actions">
                         <button className="action-btn complete-btn" onClick={() => onToggleComplete(task.id)} title="Toggle Complete">
                             {task.status === 'done' ? '↩️' : '✔'}
@@ -163,6 +166,7 @@
                     </div>
                     <div className={`task-status status-${task.status}`}></div>
                     {task.status === 'done' && <div className="completed-badge">✓ Completed</div>}
+                    {isOverdue && <div className="overdue-badge">⚠️ Overdue</div>}
                     <h3>{task.title}</h3>
                     <span className="due-date">{task.due === 'New' && task.status === 'done' ? 'Completed' : task.due}</span>
                     <p>{task.desc}</p>
