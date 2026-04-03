@@ -169,21 +169,23 @@
                     {isOverdue && <div className="overdue-badge">⚠️ Overdue</div>}
                     <div className="task-header-row">
                         <h3>{task.title}</h3>
-                        <span className={`priority-tag p-${(task.priority || 'Medium').toLowerCase()}`}>
-                            {task.priority || 'Medium'}
-                        </span>
+                        <div className="header-tags">
+                            <span className={`priority-tag p-${(task.priority || 'Medium').toLowerCase()}`}>
+                                {task.priority || 'Medium'}
+                            </span>
+                            <div className="category-tag">
+                                {task.category === 'Work' && '💼'}
+                                {task.category === 'Study' && '🎓'}
+                                {task.category === 'Personal' && '🏠'}
+                                {task.category || 'Personal'}
+                            </div>
+                        </div>
                     </div>
                     <span className="due-date">{task.due === 'New' && task.status === 'done' ? 'Completed' : task.due}</span>
                     <p>{task.desc}</p>
                     <div className="task-meta">
                         <div className="role-tag">
                             <span className="icon">👤</span> {task.role === 'All' ? 'Everyone' : task.role}
-                        </div>
-                        <div className="category-tag">
-                            {task.category === 'Work' && '🏢'}
-                            {task.category === 'Study' && '📚'}
-                            {task.category === 'Personal' && '🏠'}
-                            {task.category || 'Personal'}
                         </div>
                     </div>
                 </div>
