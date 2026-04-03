@@ -76,13 +76,13 @@
         }
 
         const INITIAL_TASKS = [
-            { id: 1, title: 'System Maintenance', desc: 'Server health check and updates.', status: 'Pending', role: 'Admin', due: '2026-04-01', priority: 'High' },
-            { id: 2, title: 'Project Research', desc: 'Analyze competitor task management tools.', status: 'Pending', role: 'All', due: '2026-04-02', priority: 'Medium' },
-            { id: 3, title: 'UI Design', desc: 'Drafting the glassmorphism layout.', status: 'Pending', role: 'All', due: '2026-04-03', priority: 'High' },
-            { id: 4, title: 'Security Audit', desc: 'Review user access logs and permissions.', status: 'Pending', role: 'Admin', due: '2026-04-06', priority: 'Medium' },
-            { id: 5, title: 'Requirement Gathering', desc: 'Finalized the core feature list.', status: 'Completed', role: 'All', due: 'Completed', priority: 'Low' },
-            { id: 6, title: 'API Integration', desc: 'Connect the frontend with the mock API.', status: 'Pending', role: 'User1', due: '2026-04-08', priority: 'Medium' },
-            { id: 7, title: 'Database Cleanup', desc: 'Remove redundant records from dev db.', status: 'Pending', role: 'User2', due: '2026-04-07', priority: 'Low' }
+            { id: 1, title: 'System Maintenance', desc: 'Server health check and updates.', status: 'Pending', role: 'Admin', due: '2026-04-01', priority: 'High', category: 'Work' },
+            { id: 2, title: 'Project Research', desc: 'Analyze competitor task management tools.', status: 'Pending', role: 'All', due: '2026-04-02', priority: 'Medium', category: 'Work' },
+            { id: 3, title: 'UI Design', desc: 'Drafting the glassmorphism layout.', status: 'Pending', role: 'All', due: '2026-04-03', priority: 'High', category: 'Study' },
+            { id: 4, title: 'Security Audit', desc: 'Review user access logs and permissions.', status: 'Pending', role: 'Admin', due: '2026-04-06', priority: 'Medium', category: 'Work' },
+            { id: 5, title: 'Requirement Gathering', desc: 'Finalized the core feature list.', status: 'Completed', role: 'All', due: 'Completed', priority: 'Low', category: 'Personal' },
+            { id: 6, title: 'API Integration', desc: 'Connect the frontend with the mock API.', status: 'Pending', role: 'User1', due: '2026-04-08', priority: 'Medium', category: 'Study' },
+            { id: 7, title: 'Database Cleanup', desc: 'Remove redundant records from dev db.', status: 'Pending', role: 'User2', due: '2026-04-07', priority: 'Low', category: 'Work' }
         ];
 
         function Sidebar({ onLogout, onReset }) {
@@ -179,6 +179,12 @@
                         <div className="role-tag">
                             <span className="icon">👤</span> {task.role === 'All' ? 'Everyone' : task.role}
                         </div>
+                        <div className="category-tag">
+                            {task.category === 'Work' && '🏢'}
+                            {task.category === 'Study' && '📚'}
+                            {task.category === 'Personal' && '🏠'}
+                            {task.category || 'Personal'}
+                        </div>
                     </div>
                 </div>
             );
@@ -189,14 +195,16 @@
             const [assignedRole, setAssignedRole] = useState(userRole === 'Admin' ? 'All' : userRole);
             const [dueDate, setDueDate] = useState('');
             const [priority, setPriority] = useState('Medium');
+            const [category, setCategory] = useState('Personal');
 
             const handleSubmit = (e) => {
                 e.preventDefault();
                 if (!title.trim() || !dueDate) return;
-                onAddTask(title, assignedRole, dueDate, priority);
+                onAddTask(title, assignedRole, dueDate, priority, category);
                 setTitle('');
                 setDueDate('');
                 setPriority('Medium');
+                setCategory('Personal');
                 if (userRole === 'Admin') setAssignedRole('All');
             };
 
@@ -238,6 +246,15 @@
                             <option value="Medium">Medium Priority</option>
                             <option value="Low">Low Priority</option>
                         </select>
+                        <select
+                            value={category}
+                            onChange={(e) => setCategory(e.target.value)}
+                            className="category-select"
+                        >
+                            <option value="Work">🏢 Work</option>
+                            <option value="Study">📚 Study</option>
+                            <option value="Personal">🏠 Personal</option>
+                        </select>
                         <button type="submit" className="add-task-btn">
                             <span className="icon">+</span> Add Task
                         </button>
@@ -265,7 +282,7 @@
                 localStorage.setItem('tm_tasks', JSON.stringify(tasks));
             }, [tasks]);
 
-            const handleAddTask = (title, role, dueDate, priority) => {
+            const handleAddTask = (title, role, dueDate, priority, category) => {
                 const isDuplicate = tasks.some(t => t.title.toLowerCase() === title.toLowerCase());
                 if (isDuplicate) {
                     alert('A task with this title already exists!');
@@ -279,7 +296,8 @@
                     status: 'Pending',
                     role: role,
                     due: dueDate,
-                    priority: priority
+                    priority: priority,
+                    category: category
                 };
                 setTasks([newTask, ...tasks]);
             };

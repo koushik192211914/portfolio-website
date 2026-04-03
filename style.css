@@ -925,6 +925,7 @@ body {
     .role-select,
     .date-input,
     .priority-select,
+    .category-select,
     .add-task-btn {
         width: 100%;
     }
@@ -1044,7 +1045,8 @@ body {
 
 .role-select,
 .date-input,
-.priority-select {
+.priority-select,
+.category-select {
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid var(--glass-border);
     color: var(--text-primary);
@@ -1063,12 +1065,14 @@ body {
 
 .role-select:hover,
 .date-input:hover,
-.priority-select:hover {
+.priority-select:hover,
+.category-select:hover {
     background: rgba(255, 255, 255, 0.1);
 }
 
 .role-select option,
-.priority-select option {
+.priority-select option,
+.category-select option {
     background: var(--bg-color);
     color: var(--text-primary);
 }
@@ -1149,4 +1153,19 @@ body {
         margin-left: 0;
         padding: 1.5rem;
     }
+}
+
+.category-tag {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    background: rgba(56, 189, 248, 0.1);
+    color: var(--accent-blue);
+    padding: 0.25rem 0.6rem;
+    border-radius: 0.5rem;
+    letter-spacing: 0.05em;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    border: 1px solid rgba(56, 189, 248, 0.2);
 }
