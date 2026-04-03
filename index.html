@@ -106,12 +106,14 @@
             );
         }
 
-        function MainHeader({ user, onLogout, searchTerm, onSearchChange }) {
+        const MainHeader = ({ onSearch, onLogout, userRole }) => {
             return (
                 <header className="main-header">
                     <div className="header-left">
-                        <h1 className="gradient-text">TaskMaster</h1>
-                        <p className="welcome-text">Collaborative Workspace</p>
+                        <div className="header-title">
+                            <h1>Welcome, <span className="role-text">{userRole === 'Admin' ? 'Admin' : 'User'}</span></h1>
+                            <p>Manage your tasks and collaborate with ease.</p>
+                        </div>
                     </div>
 
                     <div className="header-center">
@@ -121,34 +123,32 @@
                                 type="text"
                                 placeholder="Search tasks, teammates..."
                                 className="header-search"
-                                value={searchTerm}
-                                onChange={(e) => onSearchChange(e.target.value)}
+                                onChange={(e) => onSearch(e.target.value)}
                             />
                         </div>
                     </div>
 
                     <div className="header-right">
                         <div className="header-actions">
-                            <div className="notification-bell">
-                                <span className="bell-icon">🔔</span>
-                                <span className="notification-badge">3</span>
-                            </div>
-                            <button className="nav-icon-btn logout-header-btn" onClick={onLogout} title="Sign Out">
+                            <button className="icon-btn notification-btn" title="Notifications">
+                                <span className="icon">🔔</span>
+                                <span className="badge">3</span>
+                            </button>
+                            <button className="icon-btn logout-header-icon-btn" onClick={onLogout} title="Sign Out">
                                 <span className="icon">🚪</span>
-                                <span className="btn-text">Sign Out</span>
                             </button>
                         </div>
                         <div className="profile-info">
-                            <div className={`avatar-ring ${user === 'Admin' ? 'admin' : 'user'}`}>
+                            <div className={`avatar-ring ${userRole === 'Admin' ? 'admin' : 'user'}`}>
                                 <div className="avatar">
-                                    <span className={user === 'Admin' ? 'icon admin' : 'icon'}>
-                                        {user === 'Admin' ? '🛡️' : '👤'}
+                                    <span className={userRole === 'Admin' ? 'icon admin' : 'icon'}>
+                                        {userRole === 'Admin' ? '🛡️' : '👤'}
                                     </span>
                                 </div>
                             </div>
                             <div className="user-details">
                                 <div className="user-top">
-                                    <span className="user-name">{user} Profile</span>
+                                    <span className="user-name">{userRole} Profile</span>
                                 </div>
                                 <span className="user-status">Online</span>
                             </div>
@@ -413,10 +413,9 @@
                     <Sidebar onLogout={onLogout} onReset={handleResetTasks} />
                     <main className="main-content">
                         <MainHeader
-                            user={user}
+                            onSearch={setSearchTerm}
                             onLogout={onLogout}
-                            searchTerm={searchTerm}
-                            onSearchChange={setSearchTerm}
+                            userRole={user}
                         />
                         <TaskStats {...stats} />
                         <TaskForm onAddTask={handleAddTask} userRole={user} />
