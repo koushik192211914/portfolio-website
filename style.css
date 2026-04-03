@@ -951,7 +951,68 @@ body {
 
 /* Task Creation Bar */
 .task-creation-bar {
-    margin-bottom: 3.5rem;
+    margin-bottom: 2rem;
+}
+
+.task-filter-container {
+    margin-bottom: 3rem;
+    display: flex;
+    justify-content: center;
+}
+
+.filter-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+    display: flex;
+    align-items: center;
+}
+
+.filter-icon {
+    position: absolute;
+    left: 1.5rem;
+    opacity: 0.5;
+    font-size: 1rem;
+}
+
+.task-filter-input {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--glass-border);
+    padding: 1rem 3.5rem;
+    border-radius: 2rem;
+    color: white;
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.1rem;
+    transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    backdrop-filter: blur(10px);
+}
+
+.task-filter-input:focus {
+    outline: none;
+    background: rgba(255, 255, 255, 0.06);
+    border-color: var(--accent-blue);
+    transform: scale(1.02);
+    box-shadow: 0 15px 30px rgba(56, 189, 248, 0.1);
+}
+
+.clear-search {
+    position: absolute;
+    right: 1.5rem;
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.clear-search:hover {
+    color: var(--accent-pink);
+    transform: scale(1.2);
 }
 
 .add-task-form {
