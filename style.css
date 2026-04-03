@@ -695,11 +695,35 @@ body {
     font-weight: 600;
     cursor: pointer;
     transition: 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
 }
 
 .logout-btn-large:hover {
     background: var(--accent-pink);
     color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(244, 114, 182, 0.2);
+}
+
+.logout-header-btn {
+    width: auto !important;
+    padding: 0.6rem 1.25rem !important;
+    gap: 0.6rem;
+    border-color: rgba(244, 114, 182, 0.2) !important;
+    color: var(--accent-pink) !important;
+}
+
+.logout-header-btn:hover {
+    background: rgba(244, 114, 182, 0.1) !important;
+    border-color: var(--accent-pink) !important;
+}
+
+.logout-header-btn .btn-text {
+    font-size: 0.85rem;
+    font-weight: 700;
 }
 
 /* Main Content Area */
@@ -1229,8 +1253,15 @@ body {
     }
 
     .sidebar-logo,
-    .nav-item span:not(.icon),
+    .nav-item span:not(.icon) {
+        display: none;
+    }
+
     .logout-btn-large {
+        padding: 0.75rem;
+    }
+
+    .logout-btn-large .btn-text {
         display: none;
     }
 
@@ -1260,6 +1291,10 @@ body {
     .main-content {
         margin-left: 0;
         padding: 1.5rem;
+    }
+
+    .logout-header-btn .btn-text {
+        display: none;
     }
 }
 

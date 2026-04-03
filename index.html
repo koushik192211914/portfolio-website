@@ -97,7 +97,10 @@
                     </nav>
                     <div className="sidebar-footer">
                         <button onClick={onReset} className="reset-btn">Reset Dashboard</button>
-                        <button onClick={onLogout} className="logout-btn-large">Logout</button>
+                        <button className="logout-btn-large" onClick={onLogout} title="Logout">
+                            <span className="icon">🚪</span>
+                            <span className="btn-text">Logout</span>
+                        </button>
                     </div>
                 </aside>
             );
@@ -130,6 +133,10 @@
                                 <span className="bell-icon">🔔</span>
                                 <span className="notification-badge">3</span>
                             </div>
+                            <button className="nav-icon-btn logout-header-btn" onClick={onLogout} title="Sign Out">
+                                <span className="icon">🚪</span>
+                                <span className="btn-text">Sign Out</span>
+                            </button>
                         </div>
                         <div className="profile-info">
                             <div className={`avatar-ring ${user === 'Admin' ? 'admin' : 'user'}`}>
@@ -142,7 +149,6 @@
                             <div className="user-details">
                                 <div className="user-top">
                                     <span className="user-name">{user} Profile</span>
-                                    <button onClick={onLogout} className="logout-link">Logout</button>
                                 </div>
                                 <span className="user-status">Online</span>
                             </div>
