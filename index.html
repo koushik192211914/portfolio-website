@@ -76,13 +76,13 @@
         }
 
         const INITIAL_TASKS = [
-            { id: 1, title: 'System Maintenance', desc: 'Server health check and updates.', status: 'Pending', role: 'Admin', due: '2026-04-01', priority: 'High', category: 'Work' },
-            { id: 2, title: 'Project Research', desc: 'Analyze competitor task management tools.', status: 'Pending', role: 'All', due: '2026-04-02', priority: 'Medium', category: 'Work' },
-            { id: 3, title: 'UI Design', desc: 'Drafting the glassmorphism layout.', status: 'Pending', role: 'All', due: '2026-04-03', priority: 'High', category: 'Study' },
-            { id: 4, title: 'Security Audit', desc: 'Review user access logs and permissions.', status: 'Pending', role: 'Admin', due: '2026-04-06', priority: 'Medium', category: 'Work' },
-            { id: 5, title: 'Requirement Gathering', desc: 'Finalized the core feature list.', status: 'Completed', role: 'All', due: 'Completed', priority: 'Low', category: 'Personal' },
-            { id: 6, title: 'API Integration', desc: 'Connect the frontend with the mock API.', status: 'Pending', role: 'User1', due: '2026-04-08', priority: 'Medium', category: 'Study' },
-            { id: 7, title: 'Database Cleanup', desc: 'Remove redundant records from dev db.', status: 'Pending', role: 'User2', due: '2026-04-07', priority: 'Low', category: 'Work' }
+            { id: 1, title: 'System Maintenance', desc: 'Server health check and updates.', status: 'Pending', role: 'Admin', due: '2026-04-01', priority: 'High', category: 'Work', createdBy: 'Admin' },
+            { id: 2, title: 'Project Research', desc: 'Analyze competitor task management tools.', status: 'Pending', role: 'All', due: '2026-04-02', priority: 'Medium', category: 'Work', createdBy: 'Admin' },
+            { id: 3, title: 'UI Design', desc: 'Drafting the glassmorphism layout.', status: 'Pending', role: 'All', due: '2026-04-03', priority: 'High', category: 'Study', createdBy: 'Admin' },
+            { id: 4, title: 'Security Audit', desc: 'Review user access logs and permissions.', status: 'Pending', role: 'Admin', due: '2026-04-06', priority: 'Medium', category: 'Work', createdBy: 'Admin' },
+            { id: 5, title: 'Requirement Gathering', desc: 'Finalized the core feature list.', status: 'Completed', role: 'All', due: 'Completed', priority: 'Low', category: 'Personal', createdBy: 'Admin' },
+            { id: 6, title: 'API Integration', desc: 'Connect the frontend with the mock API.', status: 'Pending', role: 'User1', due: '2026-04-08', priority: 'Medium', category: 'Study', createdBy: 'Admin' },
+            { id: 7, title: 'Database Cleanup', desc: 'Remove redundant records from dev db.', status: 'Pending', role: 'User2', due: '2026-04-07', priority: 'Low', category: 'Work', createdBy: 'Admin' }
         ];
 
         function Sidebar({ onLogout, onReset }) {
@@ -184,8 +184,13 @@
                     <span className="due-date">{task.due === 'New' && task.status === 'done' ? 'Completed' : task.due}</span>
                     <p>{task.desc}</p>
                     <div className="task-meta">
-                        <div className="role-tag">
-                            <span className="icon">👤</span> {task.role === 'All' ? 'Everyone' : task.role}
+                        <div className="ownership-info">
+                            <div className="role-tag creator">
+                                <span className="icon">✍️</span> {task.createdBy || 'Unknown'}
+                            </div>
+                            <div className="role-tag assignee">
+                                <span className="icon">👤</span> {task.role === 'All' ? 'Everyone' : task.role}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -327,7 +332,8 @@
                     role: role,
                     due: dueDate,
                     priority: priority,
-                    category: category
+                    category: category,
+                    createdBy: user
                 };
                 setTasks([newTask, ...tasks]);
             };
