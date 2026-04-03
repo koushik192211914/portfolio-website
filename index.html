@@ -178,12 +178,14 @@
         function TaskForm({ onAddTask, userRole }) {
             const [title, setTitle] = useState('');
             const [assignedRole, setAssignedRole] = useState(userRole === 'Admin' ? 'All' : userRole);
+            const [dueDate, setDueDate] = useState('');
 
             const handleSubmit = (e) => {
                 e.preventDefault();
-                if (!title.trim()) return;
-                onAddTask(title, assignedRole);
+                if (!title.trim() || !dueDate) return;
+                onAddTask(title, assignedRole, dueDate);
                 setTitle('');
+                setDueDate('');
                 if (userRole === 'Admin') setAssignedRole('All');
             };
 
@@ -209,6 +211,13 @@
                                 <option value="User2">Assign to User2</option>
                             </select>
                         )}
+                        <input
+                            type="date"
+                            value={dueDate}
+                            onChange={(e) => setDueDate(e.target.value)}
+                            className="date-input"
+                            required
+                        />
                         <button type="submit" className="add-task-btn">
                             <span className="icon">+</span> Add Task
                         </button>
@@ -236,7 +245,7 @@
                 localStorage.setItem('tm_tasks', JSON.stringify(tasks));
             }, [tasks]);
 
-            const handleAddTask = (title, role) => {
+            const handleAddTask = (title, role, dueDate) => {
                 const isDuplicate = tasks.some(t => t.title.toLowerCase() === title.toLowerCase());
                 if (isDuplicate) {
                     alert('A task with this title already exists!');
@@ -249,7 +258,7 @@
                     desc: `Assigned to ${role}.`,
                     status: 'todo',
                     role: role,
-                    due: 'New'
+                    due: dueDate
                 };
                 setTasks([newTask, ...tasks]);
             };

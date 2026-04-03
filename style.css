@@ -846,6 +846,7 @@ body {
     }
 
     .role-select,
+    .date-input,
     .add-task-btn {
         width: 100%;
     }
@@ -915,7 +916,23 @@ body {
     transition: 0.3s;
 }
 
-.role-select:hover {
+.date-input {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-border);
+    color: var(--text-primary);
+    padding: 0.5rem 1rem;
+    border-radius: 1rem;
+    outline: none;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    transition: 0.3s;
+    color-scheme: dark;
+    /* Ensures the date picker is dark-themed in browsers that support it */
+}
+
+.role-select:hover,
+.date-input:hover {
     background: rgba(255, 255, 255, 0.1);
 }
 
