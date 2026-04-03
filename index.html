@@ -192,7 +192,35 @@
             );
         }
 
-        function TaskForm({ onAddTask, userRole }) {
+        function TaskStats({ total, completed, pending }) {
+            return (
+                <div className="stats-container">
+                    <div className="stat-card total">
+                        <div className="stat-info">
+                            <span className="stat-label">Total Tasks</span>
+                            <span className="stat-value">{total}</span>
+                        </div>
+                        <div className="stat-icon">📊</div>
+                    </div>
+                    <div className="stat-card pending">
+                        <div className="stat-info">
+                            <span className="stat-label">Pending</span>
+                            <span className="stat-value">{pending}</span>
+                        </div>
+                        <div className="stat-icon">⏳</div>
+                    </div>
+                    <div className="stat-card completed">
+                        <div className="stat-info">
+                            <span className="stat-label">Completed</span>
+                            <span className="stat-value">{completed}</span>
+                        </div>
+                        <div className="stat-icon">✅</div>
+                    </div>
+                </div>
+            );
+        }
+
+        const TaskForm = ({ onAddTask, userRole }) => {
             const [title, setTitle] = useState('');
             const [assignedRole, setAssignedRole] = useState(userRole === 'Admin' ? 'All' : userRole);
             const [dueDate, setDueDate] = useState('');
@@ -330,6 +358,12 @@
                 return matchesRole && matchesSearch;
             });
 
+            const stats = {
+                total: tasks.length,
+                completed: tasks.filter(t => t.status === 'Completed').length,
+                pending: tasks.filter(t => t.status === 'Pending').length
+            };
+
             const renderColumn = (status, title) => {
                 const columnTasks = filteredTasks.filter(t => t.status === status);
                 return (
@@ -369,6 +403,7 @@
                             searchTerm={searchTerm}
                             onSearchChange={setSearchTerm}
                         />
+                        <TaskStats {...stats} />
                         <TaskForm onAddTask={handleAddTask} userRole={user} />
                         <div className="task-filter-container">
                             <div className="filter-wrapper">

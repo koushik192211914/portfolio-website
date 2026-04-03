@@ -693,6 +693,88 @@ body {
     padding: 3rem 4rem;
 }
 
+/* Stats Summary */
+.stats-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 3.5rem;
+}
+
+.stat-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--glass-border);
+    padding: 1.5rem;
+    border-radius: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    backdrop-filter: blur(10px);
+    transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+}
+
+.stat-card::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.05) 0%, transparent 70%);
+    opacity: 0;
+    transition: 0.4s;
+}
+
+.stat-card:hover::after {
+    opacity: 1;
+}
+
+.stat-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.stat-label {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--text-primary);
+}
+
+.stat-icon {
+    font-size: 2.5rem;
+    opacity: 0.8;
+}
+
+.stat-card.total {
+    border-left: 4px solid var(--accent-purple);
+}
+
+.stat-card.pending {
+    border-left: 4px solid var(--accent-blue);
+}
+
+.stat-card.completed {
+    border-left: 4px solid var(--done);
+}
+
 .main-header {
     display: flex;
     justify-content: space-between;
@@ -892,21 +974,21 @@ body {
     }
 }
 
-@media (max-width: 768px) {
-    .app-layout {
+@media (max-width: 992px) {
+    .stats-container {
         grid-template-columns: 1fr;
     }
 
-    .sidebar {
-        display: none;
-        /* For simplicity, hide sidebar on mobile or could use a toggle */
+    .task-sections {
+        grid-template-columns: 1fr;
     }
 
-    .main-content {
-        padding: 1.5rem;
+    .header-center {
+        display: none;
     }
 
     .main-header {
+        padding: 1rem;
         flex-direction: column;
         align-items: flex-start;
         gap: 1rem;
@@ -932,6 +1014,16 @@ body {
 
     .header-left h1 {
         font-size: 2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .app-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .sidebar {
+        display: none;
     }
 }
 
