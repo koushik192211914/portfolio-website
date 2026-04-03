@@ -402,6 +402,8 @@ body {
     padding: 0.4rem 1rem;
     border-radius: 2rem;
     border: 1px solid rgba(56, 189, 248, 0.2);
+    margin-bottom: 1.25rem;
+    width: fit-content;
 }
 
 .role-tag {

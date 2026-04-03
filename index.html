@@ -164,12 +164,12 @@
                     <div className={`task-status status-${task.status}`}></div>
                     {task.status === 'done' && <div className="completed-badge">✓ Completed</div>}
                     <h3>{task.title}</h3>
+                    <span className="due-date">{task.due === 'New' && task.status === 'done' ? 'Completed' : task.due}</span>
                     <p>{task.desc}</p>
                     <div className="task-meta">
                         <div className="role-tag">
                             <span className="icon">👤</span> {task.role === 'All' ? 'Everyone' : task.role}
                         </div>
-                        <span className="due-date">{task.due === 'New' && task.status === 'done' ? 'Completed' : task.due}</span>
                     </div>
                 </div>
             );
