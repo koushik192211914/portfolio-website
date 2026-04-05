@@ -309,54 +309,89 @@
 
         function Dashboard({ user, onLogout }) {
             const [searchTerm, setSearchTerm] = useState('');
-            const [tasks, setTasks] = useState(() => {
-                try {
-                    const savedTasks = localStorage.getItem('tm_tasks');
-                    if (savedTasks) {
-                        const parsed = JSON.parse(savedTasks);
-                        if (Array.isArray(parsed)) return parsed;
-                    }
-                } catch (e) {
-                    console.error("Failed to load tasks from localStorage:", e);
-                }
-                return INITIAL_TASKS;
-            });
+            const [tasks, setTasks] = useState([]);
+            const [loading, setLoading] = useState(true);
 
             useEffect(() => {
-                localStorage.setItem('tm_tasks', JSON.stringify(tasks));
-            }, [tasks]);
+                const fetchTasks = async () => {
+                    try {
+                        const response = await fetch('http://localhost:3001/api/tasks');
+                        const data = await response.json();
+                        // Map internal status/role names if needed
+                        const normalizedTasks = data.map(t => ({
+                            ...t,
+                            status: t.status === 'done' ? 'Completed' : 'Pending',
+                            role: t.assigned_to || 'All',
+                            due: t.due_date || 'New',
+                            desc: t.description || `Assigned to ${t.assigned_to || 'Everyone'}.`,
+                            createdBy: t.created_by || 'Admin'
+                        }));
+                        setTasks(normalizedTasks);
+                    } catch (error) {
+                        console.error('Failed to fetch tasks:', error);
+                    } finally {
+                        setLoading(false);
+                    }
+                };
+                fetchTasks();
+            }, []);
 
-            const handleAddTask = (title, role, dueDate, priority, category) => {
+            const handleAddTask = async (title, role, dueDate, priority, category) => {
                 const isDuplicate = tasks.some(t => t.title.toLowerCase() === title.toLowerCase());
                 if (isDuplicate) {
                     alert('A task with this title already exists!');
                     return;
                 }
 
-                const newTask = {
-                    id: Date.now(),
-                    title: title,
-                    desc: `Assigned to ${role}.`,
-                    status: 'Pending',
-                    role: role,
-                    due: dueDate,
-                    priority: priority,
-                    category: category,
-                    createdBy: user
-                };
-                setTasks([newTask, ...tasks]);
+                try {
+                    const response = await fetch('http://localhost:3001/api/tasks', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            title,
+                            assigned_to: role === 'All' ? null : role,
+                            status: 'pending'
+                        })
+                    });
+                    const data = await response.json();
+
+                    const newTask = {
+                        ...data.task,
+                        status: 'Pending',
+                        role: role,
+                        due: dueDate,
+                        desc: `Assigned to ${role}.`,
+                        category: category,
+                        createdBy: user
+                    };
+                    setTasks([newTask, ...tasks]);
+                } catch (error) {
+                    console.error('Failed to add task:', error);
+                }
             };
 
-            const handleDeleteTask = (id) => {
-                setTasks(tasks.filter(task => task.id !== id));
+            const handleDeleteTask = async (id) => {
+                try {
+                    await fetch(`http://localhost:3001/api/tasks/${id}`, { method: 'DELETE' });
+                    setTasks(tasks.filter(task => task.id !== id));
+                } catch (error) {
+                    console.error('Failed to delete task:', error);
+                }
             };
 
-            const handleToggleComplete = (id) => {
-                setTasks(tasks.map(task =>
-                    task.id === id
-                        ? { ...task, status: task.status === 'Completed' ? 'Pending' : 'Completed' }
-                        : task
-                ));
+            const handleToggleComplete = async (id) => {
+                try {
+                    const response = await fetch(`http://localhost:3001/api/tasks/${id}/toggle`, { method: 'PUT' });
+                    const data = await response.json();
+
+                    setTasks(tasks.map(task =>
+                        task.id === id
+                            ? { ...task, status: data.status === 'done' ? 'Completed' : 'Pending' }
+                            : task
+                    ));
+                } catch (error) {
+                    console.error('Failed to toggle task:', error);
+                }
             };
 
             const handleResetTasks = () => {
