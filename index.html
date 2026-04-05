@@ -54,22 +54,67 @@
         }
 
         function Login({ onLogin }) {
+            const [isAdminMode, setIsAdminMode] = useState(false);
+            const [username, setUsername] = useState('');
+            const [password, setPassword] = useState('');
+            const [error, setError] = useState('');
+
+            const handleAdminLogin = (e) => {
+                e.preventDefault();
+                if (username === 'sarath' && password === '12345678') {
+                    onLogin('Admin');
+                } else {
+                    setError('Invalid username or password');
+                }
+            };
+
             return (
                 <div className="login-container">
                     <div className="login-card">
-                        <h1>Welcome Back</h1>
-                        <p>Select your profile to continue</p>
-                        <div className="role-buttons">
-                            <button onClick={() => onLogin('Admin')} className="role-btn admin">
-                                <span className="icon">🛡️</span> Admin
-                            </button>
-                            <button onClick={() => onLogin('User1')} className="role-btn user">
-                                <span className="icon">👤</span> User1
-                            </button>
-                            <button onClick={() => onLogin('User2')} className="role-btn user">
-                                <span className="icon">👤</span> User2
-                            </button>
-                        </div>
+                        <h1>{isAdminMode ? 'Admin Portal' : 'Welcome Back'}</h1>
+                        <p>{isAdminMode ? 'Please enter your credentials' : 'Select your profile to continue'}</p>
+
+                        {!isAdminMode ? (
+                            <div className="role-buttons">
+                                <button onClick={() => setIsAdminMode(true)} className="role-btn admin">
+                                    <span className="icon">🛡️</span> Admin Access
+                                </button>
+                                <div className="divider"><span>OR</span></div>
+                                <button onClick={() => onLogin('User1')} className="role-btn user">
+                                    <span className="icon">👤</span> User1
+                                </button>
+                                <button onClick={() => onLogin('User2')} className="role-btn user">
+                                    <span className="icon">👤</span> User2
+                                </button>
+                            </div>
+                        ) : (
+                            <form className="admin-login-form" onSubmit={handleAdminLogin}>
+                                <div className="form-group">
+                                    <input
+                                        type="text"
+                                        placeholder="Username"
+                                        value={username}
+                                        onChange={(e) => setUsername(e.target.value)}
+                                        required
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <input
+                                        type="password"
+                                        placeholder="Password"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        required
+                                    />
+                                </div>
+                                {error && <div className="login-error">{error}</div>}
+                                <button type="submit" className="login-submit-btn">Login as Admin</button>
+                                <button type="button" className="back-btn" onClick={() => {
+                                    setIsAdminMode(false);
+                                    setError('');
+                                }}>← Back to Selection</button>
+                            </form>
+                        )}
                     </div>
                 </div>
             );
@@ -323,7 +368,14 @@
                     try {
                         const response = await fetch('https://todo-backend-c081.onrender.com/tasks');
                         const data = await response.json();
-                        // Map internal status/role names if needed
+
+                        // Safety Check: Ensure data is an array before processing
+                        if (!Array.isArray(data)) {
+                            console.error('API Error: Expected array but received:', data);
+                            setTasks([]);
+                            return;
+                        }
+
                         const normalizedTasks = data.map(t => ({
                             ...t,
                             status: t.status === 'done' ? 'Completed' : 'Pending',
@@ -335,6 +387,7 @@
                         setTasks(normalizedTasks);
                     } catch (error) {
                         console.error('Failed to fetch tasks:', error);
+                        setTasks([]); // Set empty array to prevent crash
                     } finally {
                         setLoading(false);
                     }
@@ -343,7 +396,7 @@
             }, []);
 
             const handleAddTask = async (title, role, dueDate, priority, category) => {
-                const isDuplicate = tasks.some(t => t.title.toLowerCase() === title.toLowerCase());
+                const isDuplicate = tasks?.some(t => t.title?.toLowerCase() === title.toLowerCase());
                 if (isDuplicate) {
                     alert('A task with this title already exists!');
                     return;
