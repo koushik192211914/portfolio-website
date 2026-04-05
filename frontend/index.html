@@ -11,6 +11,17 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@600;700&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <style>
+        .sync-btn {
+            transition: transform 0.4s ease;
+            margin-right: 10px;
+        }
+
+        .sync-btn:hover {
+            transform: rotate(180deg);
+            color: var(--accent);
+        }
+    </style>
     <!-- React and ReactDOM CDNs -->
     <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
@@ -200,6 +211,9 @@
 
                     <div className="header-right">
                         <div className="header-actions">
+                            <button className="icon-btn sync-btn" onClick={() => window.location.reload()} title="Hard Refresh Sync">
+                                <span className="icon">🔄</span>
+                            </button>
                             <button className="icon-btn notification-btn" title="Notifications">
                                 <span className="icon">🔔</span>
                                 <span className="badge">3</span>
@@ -283,6 +297,10 @@
 
             useEffect(() => {
                 fetchTasks();
+
+                // Add polling to keep dashboard in sync with database (real-time updates)
+                const pollInterval = setInterval(fetchTasks, 10000); // Poll every 10 seconds
+                return () => clearInterval(pollInterval);
             }, [user]);
 
             const handleAddTask = async (e) => {
