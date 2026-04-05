@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskMaster | Efficient Task Management</title>
+    <!-- Google Fonts: Outfit for headers, Inter for body -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <!-- React and ReactDOM CDNs -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <!-- Babel for JSX support -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useMemo, Component } = React;
+        const API_BASE_URL = 'https://todo-backend-c081.onrender.com';
+
+        class ErrorBoundary extends Component {
+            constructor(props) {
+                super(props);
+                this.state = { hasError: false };
+            }
+
+            static getDerivedStateFromError(error) {
+                return { hasError: true };
+            }
+
+            render() {
+                if (this.state.hasError) {
+                    return (
+                        <div className="error-fallback">
+                            <div className="error-card">
+                                <h2>Oops! Something went wrong.</h2>
+                                <p>The dashboard encountered an unexpected error.</p>
+                                <button onClick={() => {
+                                    localStorage.clear();
+                                    window.location.reload();
+                                }} className="reset-btn">Reset & Recover</button>
+                            </div>
+                        </div>
+                    );
+                }
+                return this.props.children;
+            }
+        }
+
+        function Login({ onLogin }) {
+            const [isAdminMode, setIsAdminMode] = useState(false);
+            const [username, setUsername] = useState('');
+            const [password, setPassword] = useState('');
+            const [error, setError] = useState('');
+            const [loading, setLoading] = useState(false);
+
+            const handleLogin = async (e) => {
+                e.preventDefault();
+                setError('');
+                setLoading(true);
+                try {
+                    const response = await fetch(`${API_BASE_URL}/login`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ username, password })
+                    });
+                    const data = await response.json();
+                    if (data.success) {
+                        onLogin(data.user);
+                    } else {
+                        setError(data.message || 'Invalid credentials');
+                    }
+                } catch (err) {
+                    setError('Backend server not reachable');
+                } finally {
+                    setLoading(false);
+                }
+            };
+
+            const handleQuickLogin = (role) => {
+                const uname = role.toLowerCase();
+                setUsername(uname);
+                setPassword(uname);
+                setIsAdminMode(true);
+            };
+
+            return (
+                <div className="login-container">
+                    <div className="login-card">
+                        <h1>{isAdminMode ? 'Login Portal' : 'Welcome Back'}</h1>
+                        <p>{isAdminMode ? 'Please enter your credentials' : 'Select your profile to continue'}</p>
+
+                        {!isAdminMode ? (
+                            <div className="role-buttons">
+                                <button onClick={() => setIsAdminMode(true)} className="role-btn admin">
+                                    <span className="icon">🛡️</span> Admin Access
+                                </button>
+                                <div className="divider"><span>OR</span></div>
+                                <button onClick={() => handleQuickLogin('User1')} className="role-btn user">
+                                    <span className="icon">👤</span> User1
+                                </button>
+                                <button onClick={() => handleQuickLogin('User2')} className="role-btn user">
+                                    <span className="icon">👤</span> User2
+                                </button>
+                            </div>
+                        ) : (
+                            <form className="admin-login-form" onSubmit={handleLogin}>
+                                <div className="form-group">
+                                    <input
+                                        type="text"
+                                        placeholder="Username"
+                                        value={username}
+                                        onChange={(e) => setUsername(e.target.value)}
+                                        required
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <input
+                                        type="password"
+                                        placeholder="Password"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        required
+                                    />
+                                </div>
+                                {error && <div className="login-error">{error}</div>}
+                                <button type="submit" className="login-submit-btn" disabled={loading}>
+                                    {loading ? 'Authenticating...' : 'Login'}
+                                </button>
+                                <button type="button" className="back-btn" onClick={() => {
+                                    setIsAdminMode(false);
+                                    setError('');
+                                    setUsername('');
+                                    setPassword('');
+                                }}>← Back to Selection</button>
+                            </form>
+                        )}
+                    </div>
+                </div>
+            );
+        }
+
+        function Sidebar({ onLogout, user, onToggleTheme, currentTheme }) {
+            return (
+                <aside className="sidebar">
+                    <div className="sidebar-logo">TaskMaster</div>
+                    <nav className="sidebar-nav">
+                        <a href="#" className="nav-item active"><span className="icon">📋</span> Tasks</a>
+                        <button
+                            onClick={onToggleTheme}
+                            className="nav-item theme-toggle-btn"
+                            title={`Switch to ${currentTheme === 'light' ? 'dark' : 'light'} mode`}
+                            style={{ border: 'none', background: 'transparent', width: '100%', cursor: 'pointer', textAlign: 'left', font: 'inherit' }}
+                        >
+                            <span className="icon">{currentTheme === 'light' ? '🌙' : '☀️'}</span>
+                            {currentTheme === 'light' ? 'Dark Mode' : 'Light Mode'}
+                        </button>
+                    </nav>
+                    <div className="sidebar-footer">
+                        <div className="user-info-sm" style={{ textAlign: 'center', marginBottom: '1rem' }}>
+                            <span className="role-tag assignee">{user.role}</span>
+                        </div>
+                        <button className="logout-btn-large" onClick={onLogout} title="Logout">
+                            <span className="icon">🚪</span>
+                            <span className="btn-text">Logout</span>
+                        </button>
+                    </div>
+                </aside>
+            );
+        }
+
+        const MainHeader = ({ onSearch, onLogout, user }) => {
+            return (
+                <header className="main-header">
+                    <div className="header-left">
+                        <div className="header-title">
+                            <h1>Welcome, <span className="role-text" style={{ fontSize: '1.5rem' }}>{user.username}</span></h1>
+                            <p>{user.role === 'Admin' ? 'Administrator Panel' : 'Assigned Tasks'}</p>
+                        </div>
+                    </div>
+
+                    <div className="header-center">
+                        <div className="search-wrapper">
+                            <span className="search-icon">🔍</span>
+                            <input
+                                type="text"
+                                placeholder="Search tasks..."
+                                className="header-search"
+                                onChange={(e) => onSearch(e.target.value)}
+                            />
+                        </div>
+                    </div>
+
+                    <div className="header-right">
+                        <div className="header-actions">
+                            <button className="icon-btn notification-btn" title="Notifications">
+                                <span className="icon">🔔</span>
+                                <span className="badge">3</span>
+                            </button>
+                            <button className="icon-btn logout-header-icon-btn" onClick={onLogout} title="Sign Out">
+                                <span className="icon">🚪</span>
+                            </button>
+                        </div>
+                        <div className="profile-info">
+                            <div className={`avatar-ring ${user.role === 'Admin' ? 'admin' : 'user'}`}>
+                                <div className="avatar">
+                                    <span className={user.role === 'Admin' ? 'icon admin' : 'icon'}>
+                                        {user.role === 'Admin' ? '🛡️' : '👤'}
+                                    </span>
+                                </div>
+                            </div>
+                            <div className="user-details">
+                                <span className="user-status">Online</span>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+            );
+        }
+
+        function TaskCard({ task, onToggleComplete }) {
+            const today = new Date().toISOString().split('T')[0];
+            const isOverdue = task.status !== 'done' && task.due_date && task.due_date < today;
+
+            return (
+                <div key={task.id} className={`task-card ${task.status === 'done' ? 'completed' : ''} ${isOverdue ? 'overdue' : ''}`}>
+                    <div className="task-actions">
+                        <button className="action-btn complete-btn" onClick={() => onToggleComplete(task.id, task.status)} title="Toggle Status">
+                            {task.status === 'done' ? '↩️' : '✔'}
+                        </button>
+                    </div>
+                    <div className={`task-status status-${task.status === 'done' ? 'completed' : 'pending'}`}></div>
+                    {task.status === 'done' && <div className="completed-badge">✓ Completed</div>}
+                    {isOverdue && <div className="overdue-badge">⚠️ Overdue</div>}
+                    <div className="task-header-row">
+                        <h3>{task.title}</h3>
+                        <div className="header-tags">
+                            <span className={`priority-tag p-${(task.priority || 'Medium').toLowerCase()}`}>
+                                {task.priority || 'Medium'}
+                            </span>
+                        </div>
+                    </div>
+                    <p>{task.description}</p>
+                    <div className="task-meta">
+                        <div className="ownership-info">
+                            <div className="role-tag creator">
+                                <span className="icon">✍️</span> {task.created_by}
+                            </div>
+                            <div className="role-tag assignee">
+                                <span className="icon">👤</span> {task.assigned_to}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        function Dashboard({ user, onLogout, onToggleTheme, currentTheme }) {
+            const [searchTerm, setSearchTerm] = useState('');
+            const [tasks, setTasks] = useState([]);
+            const [loading, setLoading] = useState(true);
+
+            // Fetch tasks logic
+            const fetchTasks = async () => {
+                try {
+                    const endpoint = user.role === 'Admin' ? `${API_BASE_URL}/admin/tasks` : `${API_BASE_URL}/tasks/${user.username}`;
+                    const res = await fetch(endpoint);
+                    const data = await res.json();
+                    setTasks(Array.isArray(data) ? data : []);
+                } catch (err) {
+                    console.error('Fetch error:', err);
+                } finally {
+                    setLoading(false);
+                }
+            };
+
+            useEffect(() => {
+                fetchTasks();
+            }, [user]);
+
+            const handleAddTask = async (e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                const taskData = {
+                    title: formData.get('title'),
+                    description: formData.get('description'),
+                    assignedTo: formData.get('assignedTo'),
+                    priority: formData.get('priority'),
+                    dueDate: formData.get('dueDate')
+                };
+
+                try {
+                    const res = await fetch(`${API_BASE_URL}/assign-task`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(taskData)
+                    });
+                    if (res.ok) {
+                        e.target.reset();
+                        fetchTasks();
+                    }
+                } catch (err) {
+                    alert('Assignment failed');
+                }
+            };
+
+            const handleToggleStatus = async (id, currentStatus) => {
+                const status = currentStatus === 'pending' ? 'done' : 'pending';
+                try {
+                    await fetch(`${API_BASE_URL}/update-task-status`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ id, status })
+                    });
+                    fetchTasks();
+                } catch (err) {
+                    console.error('Update toggle failed');
+                }
+            };
+
+            const filteredTasks = tasks.filter(t => t.title.toLowerCase().includes(searchTerm.toLowerCase()));
+            const stats = {
+                total: tasks.length,
+                pending: tasks.filter(t => t.status === 'pending').length,
+                done: tasks.filter(t => t.status === 'done').length
+            };
+
+            if (loading) return <div className="loading-state">Syncing with database...</div>;
+
+            return (
+                <div className="app-layout">
+                    <Sidebar onLogout={onLogout} user={user} onToggleTheme={onToggleTheme} currentTheme={currentTheme} />
+                    <main className="main-content">
+                        <MainHeader onSearch={setSearchTerm} onLogout={onLogout} user={user} />
+
+                        <div className="stats-container" style={{ display: 'flex', gap: '1rem', marginBottom: '2rem' }}>
+                            <div className="stat-card" style={{ flex: 1, background: 'var(--card-bg)', padding: '1.5rem', borderRadius: '1rem' }}>
+                                <h4>Total: {stats.total}</h4>
+                            </div>
+                            <div className="stat-card" style={{ flex: 1, background: 'rgba(251, 191, 36, 0.1)', padding: '1.5rem', borderRadius: '1rem', color: 'var(--todo)' }}>
+                                <h4>Pending: {stats.pending}</h4>
+                            </div>
+                            <div className="stat-card" style={{ flex: 1, background: 'rgba(52, 211, 153, 0.1)', padding: '1.5rem', borderRadius: '1rem', color: 'var(--done)' }}>
+                                <h4>Done: {stats.done}</h4>
+                            </div>
+                        </div>
+
+                        {user.role === 'Admin' && (
+                            <form className="admin-task-form" onSubmit={handleAddTask} style={{ background: 'var(--card-bg)', padding: '2rem', borderRadius: '1.5rem', marginBottom: '2rem' }}>
+                                <h3>Assign New Task</h3>
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginTop: '1rem' }}>
+                                    <input name="title" placeholder="Task Title" required className="header-search" style={{ width: '100%' }} />
+                                    <select name="assignedTo" className="header-search" style={{ width: '100%' }}>
+                                        <option value="user1">User 1</option>
+                                        <option value="user2">User 2</option>
+                                        <option value="All">Everyone</option>
+                                    </select>
+                                    <textarea name="description" placeholder="Description" className="header-search" style={{ gridColumn: 'span 2', width: '100%', minHeight: '80px' }} />
+                                    <input name="dueDate" type="date" className="header-search" style={{ width: '100%' }} />
+                                    <button type="submit" className="login-submit-btn" style={{ padding: '0.8rem' }}>Assign Task</button>
+                                </div>
+                            </form>
+                        )}
+
+                        <div className="task-column">
+                            <div className="column-header"><h2>{user.role === 'Admin' ? 'All System Tasks' : 'My Tasks'}</h2></div>
+                            <div className="column-body">
+                                {filteredTasks.length > 0 ? (
+                                    filteredTasks.map(t => <TaskCard key={t.id} task={t} onToggleComplete={handleToggleStatus} />)
+                                ) : <p>No tasks found.</p>}
+                            </div>
+                        </div>
+                    </main>
+                </div>
+            );
+        }
+
+        function App() {
+            const [user, setUser] = useState(() => JSON.parse(localStorage.getItem('tm_session_v3')));
+            const [theme, setTheme] = useState(() => localStorage.getItem('tm_theme') || 'dark');
+
+            useEffect(() => {
+                document.body.className = theme === 'light' ? 'light-theme' : '';
+                localStorage.setItem('tm_theme', theme);
+            }, [theme]);
+
+            const handleLogin = (u) => {
+                setUser(u);
+                localStorage.setItem('tm_session_v3', JSON.stringify(u));
+            };
+
+            return (
+                <ErrorBoundary>
+                    {!user ? <Login onLogin={handleLogin} /> :
+                        <Dashboard user={user} onLogout={() => { setUser(null); localStorage.removeItem('tm_session_v3'); }} onToggleTheme={() => setTheme(t => t === 'light' ? 'dark' : 'light')} currentTheme={theme} />}
+                </ErrorBoundary>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+
+</html>
