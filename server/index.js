@@ -14,7 +14,7 @@ app.get('/', (req, res) => {
 });
 
 // POST endpoint to insert a new task
-app.post('/api/tasks', async (req, res) => {
+app.post('/addTask', async (req, res) => {
     const { title, assigned_to, status } = req.body;
 
     if (!title) {
@@ -43,7 +43,7 @@ app.post('/api/tasks', async (req, res) => {
 });
 
 // GET endpoint to fetch all tasks
-app.get('/api/tasks', async (req, res) => {
+app.get('/tasks', async (req, res) => {
     try {
         const [rows] = await db.execute('SELECT * FROM tasks ORDER BY created_at DESC');
         res.json(rows);
@@ -54,7 +54,7 @@ app.get('/api/tasks', async (req, res) => {
 });
 
 // DELETE endpoint to remove a task
-app.delete('/api/tasks/:id', async (req, res) => {
+app.delete('/tasks/:id', async (req, res) => {
     const { id } = req.params;
     try {
         await db.execute('DELETE FROM tasks WHERE id = ?', [id]);
@@ -66,7 +66,7 @@ app.delete('/api/tasks/:id', async (req, res) => {
 });
 
 // PUT endpoint to toggle task completion status
-app.put('/api/tasks/:id/toggle', async (req, res) => {
+app.put('/tasks/:id/toggle', async (req, res) => {
     const { id } = req.params;
     try {
         const [rows] = await db.execute('SELECT status FROM tasks WHERE id = ?', [id]);
