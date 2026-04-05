@@ -280,16 +280,19 @@
             const [searchTerm, setSearchTerm] = useState('');
             const [tasks, setTasks] = useState([]);
             const [loading, setLoading] = useState(true);
+            const [error, setError] = useState(null);
 
             // Fetch tasks logic
             const fetchTasks = async () => {
                 try {
                     const endpoint = user.role === 'Admin' ? `${API_BASE_URL}/admin/tasks` : `${API_BASE_URL}/tasks/${user.username}`;
+                    console.log('Fetching tasks from:', endpoint);
                     const res = await fetch(endpoint);
                     const data = await res.json();
                     setTasks(Array.isArray(data) ? data : []);
                 } catch (err) {
                     console.error('Fetch error:', err);
+                    setError('Connection failed: ' + err.message);
                 } finally {
                     setLoading(false);
                 }
@@ -357,6 +360,12 @@
                     <Sidebar onLogout={onLogout} user={user} onToggleTheme={onToggleTheme} currentTheme={currentTheme} />
                     <main className="main-content">
                         <MainHeader onSearch={setSearchTerm} onLogout={onLogout} user={user} />
+
+                        {error && (
+                            <div className="error-banner" style={{ background: '#fee2e2', color: '#dc2626', padding: '1rem', borderRadius: '0.5rem', marginBottom: '1rem' }}>
+                                ⚠️ {error} - <button onClick={fetchTasks} style={{ textDecoration: 'underline', background: 'none', border: 'none', cursor: 'pointer' }}>Retry</button>
+                            </div>
+                        )}
 
                         <div className="stats-container" style={{ display: 'flex', gap: '1rem', marginBottom: '2rem' }}>
                             <div className="stat-card" style={{ flex: 1, background: 'var(--card-bg)', padding: '1.5rem', borderRadius: '1rem' }}>
