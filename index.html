@@ -85,13 +85,21 @@
             { id: 7, title: 'Database Cleanup', desc: 'Remove redundant records from dev db.', status: 'Pending', role: 'User2', due: '2026-04-07', priority: 'Low', category: 'Work', createdBy: 'Admin' }
         ];
 
-        function Sidebar({ onLogout, onReset }) {
+        function Sidebar({ onLogout, onReset, onToggleTheme, currentTheme }) {
             return (
                 <aside className="sidebar">
                     <div className="sidebar-logo">TaskMaster</div>
                     <nav className="sidebar-nav">
                         <a href="#" className="nav-item active"><span className="icon">📋</span> Tasks</a>
-                        <a href="#" className="nav-item"><span className="icon">⚙️</span> Settings</a>
+                        <button
+                            onClick={onToggleTheme}
+                            className="nav-item theme-toggle-btn"
+                            title={`Switch to ${currentTheme === 'light' ? 'dark' : 'light'} mode`}
+                            style={{ border: 'none', background: 'transparent', width: '100%', cursor: 'pointer', textAlign: 'left', font: 'inherit' }}
+                        >
+                            <span className="icon">{currentTheme === 'light' ? '🌙' : '☀️'}</span>
+                            {currentTheme === 'light' ? 'Dark Mode' : 'Light Mode'}
+                        </button>
                     </nav>
                     <div className="sidebar-footer">
                         <button onClick={onReset} className="reset-btn">Reset Dashboard</button>
@@ -305,7 +313,7 @@
             );
         }
 
-        function Dashboard({ user, onLogout }) {
+        function Dashboard({ user, onLogout, onToggleTheme, currentTheme }) {
             const [searchTerm, setSearchTerm] = useState('');
             const [tasks, setTasks] = useState([]);
             const [loading, setLoading] = useState(true);
@@ -443,7 +451,7 @@
 
             return (
                 <div className="app-layout">
-                    <Sidebar onLogout={onLogout} onReset={handleResetTasks} />
+                    <Sidebar onLogout={onLogout} onReset={handleResetTasks} onToggleTheme={onToggleTheme} currentTheme={currentTheme} />
                     <main className="main-content">
                         <MainHeader
                             onSearch={setSearchTerm}
@@ -478,6 +486,16 @@
 
         function App() {
             const [user, setUser] = useState(null);
+            const [theme, setTheme] = useState(() => localStorage.getItem('tm_theme') || 'dark');
+
+            useEffect(() => {
+                document.body.className = theme === 'light' ? 'light-theme' : '';
+                localStorage.setItem('tm_theme', theme);
+            }, [theme]);
+
+            const toggleTheme = () => {
+                setTheme(prev => prev === 'light' ? 'dark' : 'light');
+            };
 
             const handleLogin = (role) => {
                 setUser(role);
@@ -494,7 +512,16 @@
             return (
                 <ErrorBoundary>
                     <div className="app-container">
-                        {!user ? <Login onLogin={handleLogin} /> : <Dashboard user={user} onLogout={handleLogout} />}
+                        {!user ? (
+                            <Login onLogin={handleLogin} />
+                        ) : (
+                            <Dashboard
+                                user={user}
+                                onLogout={handleLogout}
+                                onToggleTheme={toggleTheme}
+                                currentTheme={theme}
+                            />
+                        )}
                     </div>
                 </ErrorBoundary>
             );
