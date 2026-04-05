@@ -91,8 +91,6 @@
                     <div className="sidebar-logo">TaskMaster</div>
                     <nav className="sidebar-nav">
                         <a href="#" className="nav-item active"><span className="icon">📋</span> Tasks</a>
-                        <a href="#" className="nav-item"><span className="icon">📅</span> Calendar</a>
-                        <a href="#" className="nav-item"><span className="icon">📊</span> Analytics</a>
                         <a href="#" className="nav-item"><span className="icon">⚙️</span> Settings</a>
                     </nav>
                     <div className="sidebar-footer">
@@ -402,7 +400,7 @@
             };
 
             const filteredTasks = tasks.filter(task => {
-                const matchesRole = task.role === 'All' || task.role === user;
+                const matchesRole = user === 'Admin' || task.role === 'All' || task.role === user;
                 const matchesSearch = task.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                     task.desc.toLowerCase().includes(searchTerm.toLowerCase());
                 return matchesRole && matchesSearch;
@@ -479,7 +477,7 @@
         }
 
         function App() {
-            const [user, setUser] = useState(() => localStorage.getItem('tm_user'));
+            const [user, setUser] = useState(null);
 
             const handleLogin = (role) => {
                 setUser(role);
